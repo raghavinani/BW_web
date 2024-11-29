@@ -25,7 +25,7 @@ class home extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          child: Center(
+          child: const Center(
             child: DropdownDatePickerExample(),
           ),
         ),
