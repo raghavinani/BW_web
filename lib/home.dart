@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(home());
+  runApp(const home());
 }
 
 class home extends StatelessWidget {
@@ -9,146 +9,139 @@ class home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Home',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Home'),
-        ),
-        body: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/home.jpeg'),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: const Center(
-            child: DropdownDatePickerExample(),
-          ),
-        ),
-      ),
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: FormScreen(),
     );
   }
 }
 
-class DropdownDatePickerExample extends StatefulWidget {
-  const DropdownDatePickerExample({super.key});
+class FormScreen extends StatefulWidget {
+  const FormScreen({super.key});
 
   @override
-  _DropdownDatePickerExampleState createState() =>
-      _DropdownDatePickerExampleState();
+  _FormScreenState createState() => _FormScreenState();
 }
 
-class _DropdownDatePickerExampleState extends State<DropdownDatePickerExample> {
-  String dropdownValue1 = 'Select State';
-  DateTime? selectedDate;
-  String dropdownValue3 = '';
+class _FormScreenState extends State<FormScreen> {
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController documentNumberController =
+      TextEditingController();
+  final TextEditingController zoneDescriptionController =
+      TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController departmentController = TextEditingController();
+  final TextEditingController statFlagController = TextEditingController();
+  final TextEditingController remarksController = TextEditingController();
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        selectedDate = pickedDate;
-      });
-    }
-  }
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            width: 110,
-            child: DropdownButton<String>(
-              value: dropdownValue1,
-              onChanged: (String? newValue) {
-                setState(() {
-                  dropdownValue1 = newValue!;
-                  if (dropdownValue1 == 'Mumbai') {
-                    dropdownValue3 = 'Select Temperature';
-                  } else {
-                    dropdownValue3 = '';
-                  }
-                });
-              },
-              items: <String>[
-                'Select State',
-                'Delhi',
-                'Mumbai',
-              ].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.white.withOpacity(0.8),
+              Colors.grey.withOpacity(0.3)
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Enter your Details ',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildTextField(firstNameController, 'First Name'),
+                const SizedBox(height: 15),
+                _buildTextField(lastNameController, 'Last Name'),
+                const SizedBox(height: 15),
+                _buildTextField(documentNumberController, 'Document Number'),
+                const SizedBox(height: 15),
+                _buildTextField(zoneDescriptionController, 'Zone Description'),
+                const SizedBox(height: 15),
+                _buildTextField(locationController, 'Location'),
+                const SizedBox(height: 15),
+                _buildTextField(departmentController, 'Department'),
+                const SizedBox(height: 15),
+                _buildTextField(statFlagController, 'Stat Flag'),
+                const SizedBox(height: 15),
+                _buildTextField(remarksController, 'Remarks'),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildActionButton('Create', Colors.blue),
+                    _buildActionButton('Update', Colors.orange),
+                    _buildActionButton('Delete', Colors.red),
+                  ],
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
-          if (selectedDate != null)
-            Text(
-              'Selected Date: ${selectedDate!.toIso8601String().split('T')[0]}',
-              style: const TextStyle(fontSize: 16),
-            ),
-          ElevatedButton(
-            onPressed: () => _selectDate(context),
-            child: const Text('Select Date'),
-          ),
-          const SizedBox(height: 16),
-          if (dropdownValue3.isNotEmpty)
-            SizedBox(
-              width: 170,
-              child: DropdownButton<String>(
-                value: dropdownValue3,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue3 = newValue!;
-                  });
-                },
-                items: <String>[
-                  'Select Temperature',
-                  '23 Celcius',
-                  '25 Celcius',
-                  '27 Celcius',
-                  '29 Celcius',
-                  '32 Celcius',
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: 100,
-            child: ElevatedButton(
-              onPressed: () {
-                // Perform submit action with the selected values and date
-                print('Selected values:');
-                print('Dropdown 1: $dropdownValue1');
-                if (selectedDate != null) {
-                  print(
-                      'Selected date: ${selectedDate!.toIso8601String().split('T')[0]}');
-                }
-                print('Dropdown 3: $dropdownValue3');
-              },
-              child: const Text('Submit'),
-            ),
-          ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String hintText) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hintText,
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.7),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return '$hintText is required'; // Custom validation message
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildActionButton(String label, Color color) {
+    return ElevatedButton(
+      onPressed: () {
+        if (_formKey.currentState?.validate() ?? false) {
+          // If the form is valid, process the form
+          print('$label button pressed');
+        } else {
+          // If the form is not valid, show an error message for each field
+          print('Form is invalid');
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }
