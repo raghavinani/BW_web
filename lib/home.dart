@@ -11,138 +11,287 @@ class home extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: FormScreen(),
+      home: ActivityEntryScreen(),
     );
   }
 }
 
-class FormScreen extends StatefulWidget {
-  const FormScreen({super.key});
+class ActivityEntryScreen extends StatefulWidget {
+  const ActivityEntryScreen({super.key});
 
   @override
-  _FormScreenState createState() => _FormScreenState();
+  State<ActivityEntryScreen> createState() => _ActivityEntryScreenState();
 }
 
-class _FormScreenState extends State<FormScreen> {
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController documentNumberController =
-      TextEditingController();
-  final TextEditingController zoneDescriptionController =
-      TextEditingController();
-  final TextEditingController locationController = TextEditingController();
-  final TextEditingController departmentController = TextEditingController();
-  final TextEditingController statFlagController = TextEditingController();
-  final TextEditingController remarksController = TextEditingController();
+class _ActivityEntryScreenState extends State<ActivityEntryScreen> {
+  String? selectedProcessType,
+      selectedActivity,
+      selectedObjective,
+      selectedArea,
+      selectedDistrict,
+      selectedPinCode,
+      selectedProduct;
+  DateTime? selectedDate;
 
-  final _formKey = GlobalKey<FormState>();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
+  final TextEditingController meetingVenueController = TextEditingController();
+
+  final List<String> processTypes = ['Add', 'Edit', 'Delete'];
+  final List<String> activities = ['Brand Approval', 'Product Awareness'];
+  final List<String> objectives = ['Objective 1', 'Objective 2'];
+  final List<String> areas = ['Mumbai', 'Pune'];
+
+  final Map<String, List<String>> districtsByArea = {
+    'Mumbai': ['Thane', 'Borivali'],
+    'Pune': ['Shivajinagar', 'Kothrud'],
+  };
+
+  final Map<String, Map<String, List<String>>> pinCodesByAreaAndDistrict = {
+    'Mumbai': {
+      'Thane': ['400703', '400604'],
+      'Borivali': ['400091', '400092'],
+    },
+    'Pune': {
+      'Shivajinagar': ['411005', '411006'],
+      'Kothrud': ['411038', '411039'],
+    },
+  };
+
+  final List<String> products = ['Product A', 'Product B'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Activity Entry'),
+        centerTitle: true,
+        backgroundColor: Colors.blueGrey,
+      ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.white.withOpacity(0.8),
-              Colors.grey.withOpacity(0.3)
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Enter your Details ',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _buildTextField(firstNameController, 'First Name'),
-                const SizedBox(height: 15),
-                _buildTextField(lastNameController, 'Last Name'),
-                const SizedBox(height: 15),
-                _buildTextField(documentNumberController, 'Document Number'),
-                const SizedBox(height: 15),
-                _buildTextField(zoneDescriptionController, 'Zone Description'),
-                const SizedBox(height: 15),
-                _buildTextField(locationController, 'Location'),
-                const SizedBox(height: 15),
-                _buildTextField(departmentController, 'Department'),
-                const SizedBox(height: 15),
-                _buildTextField(statFlagController, 'Stat Flag'),
-                const SizedBox(height: 15),
-                _buildTextField(remarksController, 'Remarks'),
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        color: Colors.grey[200], // Simple light grey background
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Determine the number of columns based on screen width
+              int crossAxisCount = constraints.maxWidth > 800
+                  ? 3
+                  : 2; // 3 columns for large screens, 2 for smaller screens
+
+              return Center(
+                child: GridView.count(
+                  crossAxisCount:
+                      crossAxisCount, // Adjust the number of columns dynamically
+                  crossAxisSpacing: 8, // Reduced horizontal spacing
+                  mainAxisSpacing: 1, // Reduced vertical spacing
+                  childAspectRatio: 2, // Adjust height for form fields
                   children: [
-                    _buildActionButton('Create', Colors.blue),
-                    _buildActionButton('Update', Colors.orange),
-                    _buildActionButton('Delete', Colors.red),
+                    _buildDropdownField(
+                      label: 'Process Type *',
+                      value: selectedProcessType,
+                      items: processTypes,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedProcessType = value;
+                        });
+                      },
+                    ),
+                    _buildDropdownField(
+                      label: 'Activity *',
+                      value: selectedActivity,
+                      items: activities,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedActivity = value;
+                        });
+                      },
+                    ),
+                    _buildTextField(descriptionController, 'Description *'),
+                    _buildDropdownField(
+                      label: 'Objective *',
+                      value: selectedObjective,
+                      items: objectives,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedObjective = value;
+                        });
+                      },
+                    ),
+                    _buildTextField(
+                      TextEditingController(
+                          text: selectedDate != null
+                              ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
+                              : ''),
+                      'Activity Date *',
+                      onTap: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) {
+                          setState(() {
+                            selectedDate = picked;
+                          });
+                        }
+                      },
+                    ),
+                    _buildTextField(meetingVenueController, 'Meeting Venue *'),
+                    _buildDropdownField(
+                      label: 'Area *',
+                      value: selectedArea,
+                      items: areas,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedArea = value;
+                          selectedDistrict = null;
+                          selectedPinCode = null;
+                        });
+                      },
+                    ),
+                    _buildDropdownField(
+                      label: 'District *',
+                      value: selectedDistrict,
+                      items: selectedArea != null
+                          ? districtsByArea[selectedArea] ?? []
+                          : [],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedDistrict = value;
+                          selectedPinCode =
+                              null; // Reset pin code when district changes
+                        });
+                      },
+                    ),
+                    _buildTextField(
+                        cityController, 'City and District (Address) *'),
+                    _buildDropdownField(
+                      label: 'Pin Code *',
+                      value: selectedPinCode,
+                      items: (selectedArea != null && selectedDistrict != null)
+                          ? pinCodesByAreaAndDistrict
+                                      .containsKey(selectedArea) &&
+                                  pinCodesByAreaAndDistrict[selectedArea]!
+                                      .containsKey(selectedDistrict)
+                              ? pinCodesByAreaAndDistrict[selectedArea]![
+                                      selectedDistrict] ??
+                                  []
+                              : []
+                          : [],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedPinCode = value;
+                        });
+                      },
+                    ),
+                    _buildDropdownField(
+                      label: 'Product *',
+                      value: selectedProduct,
+                      items: products,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedProduct = value;
+                        });
+                      },
+                    ),
                   ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                print('Add pressed');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.greenAccent,
+                textStyle: const TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+              child: const Text('Add'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                print('Delete pressed');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red.shade800,
+                textStyle: const TextStyle(
+                    color: Colors.black87, fontWeight: FontWeight.bold),
+              ),
+              child: const Text('Delete'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hintText) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hintText,
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.7),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none,
+  Widget _buildTextField(TextEditingController controller, String label,
+      {VoidCallback? onTap}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return '$hintText is required'; // Custom validation message
-        }
-        return null;
-      },
+        const SizedBox(height: 4),
+        TextFormField(
+          controller: controller,
+          onTap: onTap,
+          readOnly: onTap != null,
+          decoration: InputDecoration(
+            isDense: true,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildActionButton(String label, Color color) {
-    return ElevatedButton(
-      onPressed: () {
-        if (_formKey.currentState?.validate() ?? false) {
-          // If the form is valid, process the form
-          print('$label button pressed');
-        } else {
-          // If the form is not valid, show an error message for each field
-          print('Form is invalid');
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+  Widget _buildDropdownField({
+    required String label,
+    required String? value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
+        const SizedBox(height: 4),
+        DropdownButtonFormField<String>(
+          value: value,
+          onChanged: onChanged,
+          items: items
+              .map((item) => DropdownMenuItem(
+                    value: item,
+                    child: Text(item, style: const TextStyle(fontSize: 14)),
+                  ))
+              .toList(),
+          decoration: InputDecoration(
+            isDense: true,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+          ),
+        ),
+      ],
     );
   }
 }
