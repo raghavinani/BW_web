@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'secure_storage.dart';
 
 class MyRegister extends StatefulWidget {
   const MyRegister({super.key});
@@ -8,6 +9,34 @@ class MyRegister extends StatefulWidget {
 }
 
 class _MyRegisterState extends State<MyRegister> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  final SecureStorage secureStorage = SecureStorage();
+
+  String? errorMessage;
+
+  void register() async {
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    // Basic validation
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        errorMessage = "Email and Password cannot be empty.";
+      });
+      return;
+    }
+
+    // Save email and password to secure storage
+    await secureStorage.saveData('email', email);
+    await secureStorage.saveData('password', password);
+
+    // Navigate to login screen after successful registration
+    Navigator.pushNamed(context, 'login');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,79 +71,85 @@ class _MyRegisterState extends State<MyRegister> {
                       margin: const EdgeInsets.only(left: 35, right: 35),
                       child: Column(
                         children: [
+                          if (errorMessage != null) // Display error message
+                            Text(
+                              errorMessage!,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          const SizedBox(height: 10),
                           TextField(
+                            controller: nameController,
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.white,
-                                  ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black,
-                                  ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.black,
                                 ),
-                                hintText: "Name",
-                                hintStyle: const TextStyle(color: Colors.white),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                )),
+                              ),
+                              hintText: "Name",
+                              hintStyle: const TextStyle(color: Colors.white),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
                           ),
-                          const SizedBox(
-                            height: 30,
-                          ),
+                          const SizedBox(height: 30),
                           TextField(
+                            controller: emailController,
                             style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.white,
-                                  ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black,
-                                  ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.black,
                                 ),
-                                hintText: "Email",
-                                hintStyle: const TextStyle(color: Colors.white),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                )),
+                              ),
+                              hintText: "Email",
+                              hintStyle: const TextStyle(color: Colors.white),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
                           ),
-                          const SizedBox(
-                            height: 30,
-                          ),
+                          const SizedBox(height: 30),
                           TextField(
+                            controller: passwordController,
                             style: const TextStyle(color: Colors.white),
                             obscureText: true,
                             decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.white,
-                                  ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                    color: Colors.black,
-                                  ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.black,
                                 ),
-                                hintText: "Password",
-                                hintStyle: const TextStyle(color: Colors.white),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                )),
+                              ),
+                              hintText: "Password",
+                              hintStyle: const TextStyle(color: Colors.white),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
                           ),
-                          const SizedBox(
-                            height: 40,
-                          ),
+                          const SizedBox(height: 40),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -129,17 +164,14 @@ class _MyRegisterState extends State<MyRegister> {
                                 radius: 30,
                                 backgroundColor: const Color(0xff4c505b),
                                 child: IconButton(
-                                    color: Colors.white,
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.arrow_forward,
-                                    )),
-                              )
+                                  color: Colors.white,
+                                  onPressed: register,
+                                  icon: const Icon(Icons.arrow_forward),
+                                ),
+                              ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 40,
-                          ),
+                          const SizedBox(height: 40),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -158,10 +190,10 @@ class _MyRegisterState extends State<MyRegister> {
                                 ),
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:login/home.dart';
+import 'home.dart';
+import 'secure_storage.dart';
 
 class MyLogin extends StatefulWidget {
   const MyLogin({super.key});
@@ -15,37 +14,60 @@ class _MyLoginState extends State<MyLogin> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
-  late Box box1;
+  final SecureStorage secureStorage = SecureStorage();
+
+  String? errorMessage; // To show error message
 
   @override
   void initState() {
-    //
     super.initState();
-    createBox();
+    getStoredData();
   }
 
-  void createBox() async {
-    box1 = await Hive.openBox('logininfo');
-    getdata();
-  }
+  void getStoredData() async {
+    // Pre-fill fields if data exists in secure storage
+    final storedEmail = await secureStorage.readData('email');
+    final storedPassword = await secureStorage.readData('password');
 
-  void getdata() async {
-    if (box1.get('email') != null) {
-      email.text = box1.get('email');
+    if (storedEmail != null && storedPassword != null) {
+      email.text = storedEmail;
+      password.text = storedPassword;
       isChecked = true;
       setState(() {});
     }
-    if (box1.get('password') != null) {
-      password.text = box1.get('password');
-      isChecked = true;
-      setState(() {});
+  }
+
+  void login() async {
+    final storedEmail = await secureStorage.readData('email');
+    final storedPassword = await secureStorage.readData('password');
+
+    if (email.text == storedEmail && password.text == storedPassword) {
+      // Navigate to the home page if credentials match
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) {
+            return const home();
+          },
+        ),
+      );
+    } else {
+      // Show error if credentials do not match
+      setState(() {
+        errorMessage = "Invalid email or password";
+      });
+    }
+
+    // Save data if "Remember Me" is checked
+    if (isChecked) {
+      await secureStorage.saveData('email', email.text);
+      await secureStorage.saveData('password', password.text);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // width: double.infinity, // Ensure full width
       height: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -74,6 +96,13 @@ class _MyLoginState extends State<MyLogin> {
                       margin: const EdgeInsets.only(left: 35, right: 35),
                       child: Column(
                         children: [
+                          if (errorMessage !=
+                              null) // Show error message if present
+                            Text(
+                              errorMessage!,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          const SizedBox(height: 10),
                           TextField(
                             controller: email,
                             style: const TextStyle(color: Colors.black),
@@ -85,9 +114,7 @@ class _MyLoginState extends State<MyLogin> {
                                   borderRadius: BorderRadius.circular(10),
                                 )),
                           ),
-                          const SizedBox(
-                            height: 30,
-                          ),
+                          const SizedBox(height: 30),
                           TextField(
                             controller: password,
                             style: const TextStyle(),
@@ -100,9 +127,7 @@ class _MyLoginState extends State<MyLogin> {
                                   borderRadius: BorderRadius.circular(10),
                                 )),
                           ),
-                          const SizedBox(
-                            height: 40,
-                          ),
+                          const SizedBox(height: 40),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -113,8 +138,9 @@ class _MyLoginState extends State<MyLogin> {
                               Checkbox(
                                 value: isChecked,
                                 onChanged: (value) {
-                                  isChecked = !isChecked;
-                                  setState(() {});
+                                  setState(() {
+                                    isChecked = value ?? false;
+                                  });
                                 },
                               ),
                             ],
@@ -131,27 +157,14 @@ class _MyLoginState extends State<MyLogin> {
                                 radius: 30,
                                 backgroundColor: const Color(0xff4c505b),
                                 child: IconButton(
-                                    color: Colors.white,
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                            return home();
-                                          },
-                                        ),
-                                      );
-                                      login();
-                                    },
-                                    icon: const Icon(
-                                      Icons.arrow_forward,
-                                    )),
+                                  color: Colors.white,
+                                  onPressed: login,
+                                  icon: const Icon(Icons.arrow_forward),
+                                ),
                               )
                             ],
                           ),
-                          const SizedBox(
-                            height: 40,
-                          ),
+                          const SizedBox(height: 40),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -170,20 +183,21 @@ class _MyLoginState extends State<MyLogin> {
                                 ),
                               ),
                               TextButton(
-                                  onPressed: () {},
-                                  child: const Text(
-                                    'Forgot Password',
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      color: Color(0xff4c505b),
-                                      fontSize: 18,
-                                    ),
-                                  )),
+                                onPressed: () {},
+                                child: const Text(
+                                  'Forgot Password',
+                                  style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    color: Color(0xff4c505b),
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
                             ],
                           )
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -192,12 +206,5 @@ class _MyLoginState extends State<MyLogin> {
         ),
       ),
     );
-  }
-
-  void login() {
-    if (isChecked) {
-      box1.put('email', email.text);
-      box1.put('password', password.text);
-    }
   }
 }
