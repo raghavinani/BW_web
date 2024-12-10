@@ -24,6 +24,8 @@ class ActivityEntryScreen extends StatefulWidget {
 }
 
 class _ActivityEntryScreenState extends State<ActivityEntryScreen> {
+  final _formKey = GlobalKey<FormState>();
+
   String? selectedProcessType,
       selectedActivity,
       selectedObjective,
@@ -69,195 +71,229 @@ class _ActivityEntryScreenState extends State<ActivityEntryScreen> {
         backgroundColor: Colors.blueGrey,
       ),
       body: Container(
-        color: Colors.grey[200], // Simple light grey background
+        color: Colors.grey[200],
         child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              // Determine the number of columns based on screen width
-              int crossAxisCount = constraints.maxWidth > 800
-                  ? 3
-                  : 2; // 3 columns for large screens, 2 for smaller screens
-
-              return Center(
-                child: GridView.count(
-                  crossAxisCount:
-                      crossAxisCount, // Adjust the number of columns dynamically
-                  crossAxisSpacing: 8, // Reduced horizontal spacing
-                  mainAxisSpacing: 1, // Reduced vertical spacing
-                  childAspectRatio: 2, // Adjust height for form fields
-                  children: [
-                    _buildDropdownField(
-                      label: 'Process Type *',
-                      value: selectedProcessType,
-                      items: processTypes,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedProcessType = value;
-                        });
-                      },
-                    ),
-                    _buildDropdownField(
-                      label: 'Activity *',
-                      value: selectedActivity,
-                      items: activities,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedActivity = value;
-                        });
-                      },
-                    ),
-                    _buildTextField(descriptionController, 'Description *'),
-                    _buildDropdownField(
-                      label: 'Objective *',
-                      value: selectedObjective,
-                      items: objectives,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedObjective = value;
-                        });
-                      },
-                    ),
-                    _buildTextField(
-                      TextEditingController(
+          padding: const EdgeInsets.all(12.0),
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 10,
+                    children: [
+                      _buildDropdownField(
+                        label: 'Process Type *',
+                        value: selectedProcessType,
+                        items: processTypes,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedProcessType = value;
+                          });
+                        },
+                        validator: (value) => value == null
+                            ? 'Please select a process type'
+                            : null,
+                      ),
+                      _buildDropdownField(
+                        label: 'Activity *',
+                        value: selectedActivity,
+                        items: activities,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedActivity = value;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select an activity' : null,
+                      ),
+                      _buildTextField(
+                        descriptionController,
+                        'Description *',
+                        validator: (value) => value!.isEmpty
+                            ? 'Please enter a description'
+                            : null,
+                      ),
+                      _buildDropdownField(
+                        label: 'Objective *',
+                        value: selectedObjective,
+                        items: objectives,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedObjective = value;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select an objective' : null,
+                      ),
+                      _buildTextField(
+                        TextEditingController(
                           text: selectedDate != null
                               ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
-                              : ''),
-                      'Activity Date *',
-                      onTap: () async {
-                        final DateTime? picked = await showDatePicker(
-                          context: context,
-                          initialDate: selectedDate ?? DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (picked != null) {
+                              : '',
+                        ),
+                        'Activity Date *',
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: selectedDate ?? DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              selectedDate = picked;
+                            });
+                          }
+                        },
+                        validator: (value) => selectedDate == null
+                            ? 'Please select a date'
+                            : null,
+                      ),
+                      _buildTextField(
+                        meetingVenueController,
+                        'Meeting Venue *',
+                        validator: (value) =>
+                            value!.isEmpty ? 'Please enter a venue' : null,
+                      ),
+                      _buildDropdownField(
+                        label: 'Area *',
+                        value: selectedArea,
+                        items: areas,
+                        onChanged: (value) {
                           setState(() {
-                            selectedDate = picked;
+                            selectedArea = value;
+                            selectedDistrict = null;
+                            selectedPinCode = null;
                           });
-                        }
-                      },
-                    ),
-                    _buildTextField(meetingVenueController, 'Meeting Venue *'),
-                    _buildDropdownField(
-                      label: 'Area *',
-                      value: selectedArea,
-                      items: areas,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedArea = value;
-                          selectedDistrict = null;
-                          selectedPinCode = null;
-                        });
-                      },
-                    ),
-                    _buildDropdownField(
-                      label: 'District *',
-                      value: selectedDistrict,
-                      items: selectedArea != null
-                          ? districtsByArea[selectedArea] ?? []
-                          : [],
-                      onChanged: (value) {
-                        setState(() {
-                          selectedDistrict = value;
-                          selectedPinCode =
-                              null; // Reset pin code when district changes
-                        });
-                      },
-                    ),
-                    _buildTextField(
-                        cityController, 'City and District (Address) *'),
-                    _buildDropdownField(
-                      label: 'Pin Code *',
-                      value: selectedPinCode,
-                      items: (selectedArea != null && selectedDistrict != null)
-                          ? pinCodesByAreaAndDistrict
-                                      .containsKey(selectedArea) &&
-                                  pinCodesByAreaAndDistrict[selectedArea]!
-                                      .containsKey(selectedDistrict)
-                              ? pinCodesByAreaAndDistrict[selectedArea]![
-                                      selectedDistrict] ??
-                                  []
-                              : []
-                          : [],
-                      onChanged: (value) {
-                        setState(() {
-                          selectedPinCode = value;
-                        });
-                      },
-                    ),
-                    _buildDropdownField(
-                      label: 'Product *',
-                      value: selectedProduct,
-                      items: products,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedProduct = value;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select an area' : null,
+                      ),
+                      _buildDropdownField(
+                        label: 'District *',
+                        value: selectedDistrict,
+                        items: selectedArea != null
+                            ? districtsByArea[selectedArea] ?? []
+                            : [],
+                        onChanged: (value) {
+                          setState(() {
+                            selectedDistrict = value;
+                            selectedPinCode = null;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select a district' : null,
+                      ),
+                      _buildDropdownField(
+                        label: 'Pin Code *',
+                        value: selectedPinCode,
+                        items:
+                            (selectedArea != null && selectedDistrict != null)
+                                ? pinCodesByAreaAndDistrict[selectedArea]![
+                                        selectedDistrict] ??
+                                    []
+                                : [],
+                        onChanged: (value) {
+                          setState(() {
+                            selectedPinCode = value;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select a pin code' : null,
+                      ),
+                      _buildDropdownField(
+                        label: 'Product *',
+                        value: selectedProduct,
+                        items: products,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedProduct = value;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'Please select a product' : null,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            print('Form submitted successfully');
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.greenAccent,
+                        ),
+                        child: const Text(
+                          'Add',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          print('Delete pressed');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red.shade400,
+                        ),
+                        child: const Text(
+                          'Delete',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                print('Add pressed');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.greenAccent,
-                textStyle: const TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.bold),
-              ),
-              child: const Text('Add'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                print('Delete pressed');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade800,
-                textStyle: const TextStyle(
-                    color: Colors.black87, fontWeight: FontWeight.bold),
-              ),
-              child: const Text('Delete'),
-            ),
-          ],
         ),
       ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label,
-      {VoidCallback? onTap}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 14),
-        ),
-        const SizedBox(height: 4),
-        TextFormField(
-          controller: controller,
-          onTap: onTap,
-          readOnly: onTap != null,
-          decoration: InputDecoration(
-            isDense: true,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label, {
+    VoidCallback? onTap,
+    String? Function(String?)? validator,
+  }) {
+    return SizedBox(
+      width: 170,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 14)),
+          const SizedBox(height: 4),
+          TextFormField(
+            controller: controller,
+            onTap: onTap,
+            readOnly: onTap != null,
+            validator: validator,
+            decoration: InputDecoration(
+              isDense: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -266,32 +302,36 @@ class _ActivityEntryScreenState extends State<ActivityEntryScreen> {
     required String? value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
+    String? Function(String?)? validator,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 14),
-        ),
-        const SizedBox(height: 4),
-        DropdownButtonFormField<String>(
-          value: value,
-          onChanged: onChanged,
-          items: items
-              .map((item) => DropdownMenuItem(
-                    value: item,
-                    child: Text(item, style: const TextStyle(fontSize: 14)),
-                  ))
-              .toList(),
-          decoration: InputDecoration(
-            isDense: true,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(5)),
+    return SizedBox(
+      width: 170,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 14)),
+          const SizedBox(height: 4),
+          DropdownButtonFormField<String>(
+            value: value,
+            onChanged: onChanged,
+            validator: validator,
+            items: items
+                .map((item) => DropdownMenuItem(
+                      value: item,
+                      child: Text(item, style: const TextStyle(fontSize: 14)),
+                    ))
+                .toList(),
+            decoration: InputDecoration(
+              isDense: true,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
