@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marquee/marquee.dart';
 
 void main() {
   runApp(const home());
@@ -28,20 +29,18 @@ class _ActivityEntryScreenState extends State<ActivityEntryScreen> {
 
   String? selectedProcessType,
       selectedActivity,
-      selectedObjective,
       selectedArea,
       selectedDistrict,
       selectedPinCode,
       selectedProduct;
   DateTime? selectedDate;
 
+  final TextEditingController docNumController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
   final TextEditingController meetingVenueController = TextEditingController();
 
   final List<String> processTypes = ['Add', 'Edit', 'Delete'];
   final List<String> activities = ['Brand Approval', 'Product Awareness'];
-  final List<String> objectives = ['Objective 1', 'Objective 2'];
   final List<String> areas = ['Mumbai', 'Pune'];
 
   final Map<String, List<String>> districtsByArea = {
@@ -75,189 +74,275 @@ class _ActivityEntryScreenState extends State<ActivityEntryScreen> {
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 10,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // NOTE with delay and scrolling
+                SizedBox(
+                    height: 30,
+                    child: Marquee(
+                      text:
+                          'NOTE: DocNum is NOT required for adding details. For searching and deleting, only DocNum is required.',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                      blankSpace: 500.0,
+                      velocity: 30.0,
+                      startAfter: const Duration(seconds: 2),
+                      pauseAfterRound: const Duration(seconds: 1),
+                      accelerationDuration: const Duration(seconds: 1),
+                    )),
+                const SizedBox(height: 8),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildDropdownField(
-                        label: 'Process Type *',
-                        value: selectedProcessType,
-                        items: processTypes,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedProcessType = value;
-                          });
-                        },
-                        validator: (value) => value == null
-                            ? 'Please select a process type'
-                            : null,
-                      ),
-                      _buildDropdownField(
-                        label: 'Activity *',
-                        value: selectedActivity,
-                        items: activities,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedActivity = value;
-                          });
-                        },
-                        validator: (value) =>
-                            value == null ? 'Please select an activity' : null,
-                      ),
-                      _buildTextField(
-                        descriptionController,
-                        'Description *',
-                        validator: (value) => value!.isEmpty
-                            ? 'Please enter a description'
-                            : null,
-                      ),
-                      _buildDropdownField(
-                        label: 'Objective *',
-                        value: selectedObjective,
-                        items: objectives,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedObjective = value;
-                          });
-                        },
-                        validator: (value) =>
-                            value == null ? 'Please select an objective' : null,
-                      ),
-                      _buildTextField(
-                        TextEditingController(
-                          text: selectedDate != null
-                              ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
-                              : '',
-                        ),
-                        'Activity Date *',
-                        onTap: () async {
-                          final DateTime? picked = await showDatePicker(
-                            context: context,
-                            initialDate: selectedDate ?? DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (picked != null) {
-                            setState(() {
-                              selectedDate = picked;
-                            });
-                          }
-                        },
-                        validator: (value) => selectedDate == null
-                            ? 'Please select a date'
-                            : null,
-                      ),
-                      _buildTextField(
-                        meetingVenueController,
-                        'Meeting Venue *',
-                        validator: (value) =>
-                            value!.isEmpty ? 'Please enter a venue' : null,
-                      ),
-                      _buildDropdownField(
-                        label: 'Area *',
-                        value: selectedArea,
-                        items: areas,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedArea = value;
-                            selectedDistrict = null;
-                            selectedPinCode = null;
-                          });
-                        },
-                        validator: (value) =>
-                            value == null ? 'Please select an area' : null,
-                      ),
-                      _buildDropdownField(
-                        label: 'District *',
-                        value: selectedDistrict,
-                        items: selectedArea != null
-                            ? districtsByArea[selectedArea] ?? []
-                            : [],
-                        onChanged: (value) {
-                          setState(() {
-                            selectedDistrict = value;
-                            selectedPinCode = null;
-                          });
-                        },
-                        validator: (value) =>
-                            value == null ? 'Please select a district' : null,
-                      ),
-                      _buildDropdownField(
-                        label: 'Pin Code *',
-                        value: selectedPinCode,
-                        items:
-                            (selectedArea != null && selectedDistrict != null)
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 10,
+                        children: [
+                          _buildTextField(
+                            docNumController,
+                            'DocNum',
+                            validator: (value) => null, // Optional for Add
+                          ),
+                          _buildDropdownField(
+                            label: 'Process Type *',
+                            value: selectedProcessType,
+                            items: processTypes,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedProcessType = value;
+                              });
+                            },
+                            validator: (value) => value == null
+                                ? 'Please select a process type'
+                                : null,
+                          ),
+                          _buildDropdownField(
+                            label: 'Activity *',
+                            value: selectedActivity,
+                            items: activities,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedActivity = value;
+                              });
+                            },
+                            validator: (value) => value == null
+                                ? 'Please select an activity'
+                                : null,
+                          ),
+                          _buildTextField(
+                            descriptionController,
+                            'Description *',
+                            validator: (value) => value!.isEmpty
+                                ? 'Please enter a description'
+                                : null,
+                          ),
+                          _buildTextField(
+                            TextEditingController(
+                              text: selectedDate != null
+                                  ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
+                                  : '',
+                            ),
+                            'Activity Date *',
+                            onTap: () async {
+                              final DateTime? picked = await showDatePicker(
+                                context: context,
+                                initialDate: selectedDate ?? DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2100),
+                              );
+                              if (picked != null) {
+                                setState(() {
+                                  selectedDate = picked;
+                                });
+                              }
+                            },
+                            validator: (value) => selectedDate == null
+                                ? 'Please select a date'
+                                : null,
+                          ),
+                          _buildTextField(
+                            meetingVenueController,
+                            'Meeting Venue *',
+                            validator: (value) =>
+                                value!.isEmpty ? 'Please enter a venue' : null,
+                          ),
+                          _buildDropdownField(
+                            label: 'Area *',
+                            value: selectedArea,
+                            items: areas,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedArea = value;
+                                selectedDistrict = null;
+                                selectedPinCode = null;
+                              });
+                            },
+                            validator: (value) =>
+                                value == null ? 'Please select an area' : null,
+                          ),
+                          _buildDropdownField(
+                            label: 'District *',
+                            value: selectedDistrict,
+                            items: selectedArea != null
+                                ? districtsByArea[selectedArea] ?? []
+                                : [],
+                            onChanged: (value) {
+                              setState(() {
+                                selectedDistrict = value;
+                                selectedPinCode = null;
+                              });
+                            },
+                            validator: (value) => value == null
+                                ? 'Please select a district'
+                                : null,
+                          ),
+                          _buildDropdownField(
+                            label: 'Pin Code *',
+                            value: selectedPinCode,
+                            items: (selectedArea != null &&
+                                    selectedDistrict != null)
                                 ? pinCodesByAreaAndDistrict[selectedArea]![
                                         selectedDistrict] ??
                                     []
                                 : [],
-                        onChanged: (value) {
-                          setState(() {
-                            selectedPinCode = value;
-                          });
-                        },
-                        validator: (value) =>
-                            value == null ? 'Please select a pin code' : null,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedPinCode = value;
+                              });
+                            },
+                            validator: (value) => value == null
+                                ? 'Please select a pin code'
+                                : null,
+                          ),
+                          _buildDropdownField(
+                            label: 'Product *',
+                            value: selectedProduct,
+                            items: products,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedProduct = value;
+                              });
+                            },
+                            validator: (value) => value == null
+                                ? 'Please select a product'
+                                : null,
+                          ),
+                        ],
                       ),
-                      _buildDropdownField(
-                        label: 'Product *',
-                        value: selectedProduct,
-                        items: products,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedProduct = value;
-                          });
-                        },
-                        validator: (value) =>
-                            value == null ? 'Please select a product' : null,
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Info'),
+                                    content: const Text(
+                                        'DocNum will be assigned automatically.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          print('Entry added successfully.');
+                                        },
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.greenAccent,
+                            ),
+                            child: const Text(
+                              'Add',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (docNumController.text.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text('DocNum is required for delete.'),
+                                  ),
+                                );
+                              } else {
+                                print(
+                                    'Delete pressed for DocNum: ${docNumController.text}');
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red.shade400,
+                            ),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (docNumController.text.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content:
+                                        Text('DocNum is required for search.'),
+                                  ),
+                                );
+                              } else {
+                                print(
+                                    'Search pressed for DocNum: ${docNumController.text}');
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                            ),
+                            child: const Text(
+                              'Search',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              print('Download all data');
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orangeAccent,
+                            ),
+                            child: const Text(
+                              'All',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            print('Form submitted successfully');
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.greenAccent,
-                        ),
-                        child: const Text(
-                          'Add',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          print('Delete pressed');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red.shade400,
-                        ),
-                        child: const Text(
-                          'Delete',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
