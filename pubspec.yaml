@@ -35,8 +35,9 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   hive_generator: ^2.0.1
-  path_provider: ^2.0.15
+  path_provider: ^2.1.5
   marquee: ^2.3.0
+  excel: ^4.0.6
 
 
 

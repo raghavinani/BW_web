@@ -1,5 +1,8 @@
+import 'dart:io';
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const home());
@@ -324,6 +327,7 @@ class _ActivityEntryScreenState extends State<ActivityEntryScreen> {
                           ),
                           ElevatedButton(
                             onPressed: () {
+                              _downloadAllData(context);
                               print('Download all data');
                             },
                             style: ElevatedButton.styleFrom(
@@ -348,6 +352,93 @@ class _ActivityEntryScreenState extends State<ActivityEntryScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _downloadAllData(BuildContext context) async {
+    final List<Map<String, dynamic>> sampleData = [
+      {
+        "DocNum": "101",
+        "Process Type": "Add",
+        "Activity": "Brand Approval",
+        "Description": "Brand XYZ approved for promotion",
+        "Activity Date": "10/12/2024",
+        "Meeting Venue": "Mumbai Office",
+        "Area": "Mumbai",
+        "District": "Thane",
+        "Pin Code": "400703",
+        "Product": "Product A",
+      },
+      {
+        "DocNum": "102",
+        "Process Type": "Edit",
+        "Activity": "Product Awareness",
+        "Description": "Session conducted for awareness",
+        "Activity Date": "11/12/2024",
+        "Meeting Venue": "Pune Office",
+        "Area": "Pune",
+        "District": "Shivajinagar",
+        "Pin Code": "411005",
+        "Product": "Product B",
+      },
+    ];
+
+    final Excel excel = Excel.createExcel();
+    final Sheet sheet = excel['Activity Data'];
+
+    // Add header row
+    final List<String> headers = sampleData.first.keys.toList();
+    for (int col = 0; col < headers.length; col++) {
+      sheet
+          .cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0))
+          .value = TextCellValue(headers[col]); // Explicitly set TextCellValue
+    }
+
+    // Add data rows
+    for (int row = 0; row < sampleData.length; row++) {
+      final dataRow = sampleData[row].values.toList();
+      for (int col = 0; col < dataRow.length; col++) {
+        final value = dataRow[col];
+        // Use appropriate CellValue types based on value type
+        if (value is String) {
+          sheet
+              .cell(CellIndex.indexByColumnRow(
+                  columnIndex: col, rowIndex: row + 1))
+              .value = TextCellValue(value);
+        } else if (value is int) {
+          sheet
+              .cell(CellIndex.indexByColumnRow(
+                  columnIndex: col, rowIndex: row + 1))
+              .value = IntCellValue(value);
+        } else if (value is double) {
+          sheet
+              .cell(CellIndex.indexByColumnRow(
+                  columnIndex: col, rowIndex: row + 1))
+              .value = DoubleCellValue(value);
+        } else {
+          sheet
+              .cell(CellIndex.indexByColumnRow(
+                  columnIndex: col, rowIndex: row + 1))
+              .value = TextCellValue(value.toString());
+        }
+      }
+    }
+
+    try {
+      final Directory directory = await getApplicationDocumentsDirectory();
+      final String path = '${directory.path}/ActivityData.xlsx';
+      final File file = File(path);
+      file.writeAsBytesSync(excel.save()!);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Excel file saved at $path')),
+      );
+      print('Excel file saved at $path');
+    } catch (e) {
+      print('$e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error saving file: $e')),
+      );
+    }
   }
 
   Widget _buildTextField(

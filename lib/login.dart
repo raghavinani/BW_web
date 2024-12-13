@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login/content.dart';
 import 'home.dart';
 import 'secure_storage.dart';
 
@@ -47,7 +48,7 @@ class _MyLoginState extends State<MyLogin> {
         context,
         MaterialPageRoute(
           builder: (BuildContext context) {
-            return const home();
+            return const ContentPage();
           },
         ),
       );
