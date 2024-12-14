@@ -38,6 +38,7 @@ dependencies:
   path_provider: ^2.1.5
   marquee: ^2.3.0
   excel: ^4.0.6
+  file_picker: ^8.1.5
 
 
 
