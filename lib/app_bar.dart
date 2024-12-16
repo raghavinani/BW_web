@@ -29,7 +29,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
           child: Image.asset(
             'assets/logo.jpeg',
-            fit: BoxFit.contain,
+            fit: BoxFit.fitWidth, // Makes the logo wider
+            width: 500, // Set a fixed width to make it wider
+            height: kToolbarHeight,
           ),
         ),
       ),
@@ -46,15 +48,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           : null,
       actions: [
         IconButton(
-          icon: const Icon(Icons.search),
+          icon: const Icon(Icons.search, color: Colors.white),
           onPressed: () {},
         ),
         IconButton(
-          icon: const Icon(Icons.list),
-          onPressed: () {},
+          icon: const Icon(Icons.list, color: Colors.white),
+          onPressed: () {
+            _showSidebar(context);
+          },
         ),
         IconButton(
-          icon: const Icon(Icons.notifications),
+          icon: const Icon(Icons.notifications, color: Colors.white),
           onPressed: () {},
         ),
         PopupMenuButton<String>(
@@ -84,6 +88,25 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
       ],
+    );
+  }
+
+  void _showSidebar(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          color: const Color.fromARGB(255, 46, 112, 226),
+          child: ListView(
+            children: [
+              _buildSidebarMenu(context, 'Transactions', _transactionLinks),
+              _buildSidebarMenu(context, 'Reports', _reportLinks),
+              _buildSidebarMenu(context, 'Masters', _masterLinks),
+              _buildSidebarMenu(context, 'Miscellaneous', _miscLinks),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -124,15 +147,52 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
+  Widget _buildSidebarMenu(
+    BuildContext context,
+    String title,
+    List<Map<String, dynamic>> links,
+  ) {
+    return ExpansionTile(
+      title: Padding(
+        padding:
+            const EdgeInsets.only(left: 16.0), // Shift the title slightly right
+        child: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white, // Set the title color to black
+            fontWeight: FontWeight.bold, // Bold the title
+          ),
+        ),
+      ),
+      children: links.map<Widget>((link) {
+        return _buildSubMenu(context, link);
+      }).toList(),
+    );
+  }
+
   Widget _buildSubMenu(BuildContext context, Map<String, dynamic> link) {
     return PopupMenuButton<String>(
       offset: const Offset(150, 0), // Adjust the dropdown position to the right
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(link['title']),
-          const Icon(Icons.arrow_right, size: 16),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.only(
+            left: 30.0), // Shift submenu items slightly right
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              link['title'],
+              style: const TextStyle(
+                fontWeight: FontWeight.bold, // Make the title bold
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  right:
+                      30.0), // Adjust the arrow position slightly to the left
+              child: const Icon(Icons.arrow_right, size: 16),
+            ),
+          ],
+        ),
       ),
       onSelected: (value) {
         if (value == 'Rural Retailer Entry/Update') {

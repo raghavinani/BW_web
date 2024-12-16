@@ -1,3 +1,6 @@
+import 'dart:io' as io; // For mobile file handling
+import 'dart:typed_data'; // For web file handling
+import 'package:flutter/foundation.dart'; // To check platform
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:login/app_bar.dart';
@@ -28,14 +31,88 @@ class RetailerRegistrationPage extends StatefulWidget {
 
 class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
-  String? _uploadedFile;
+  String? _selectedOption;
+
+  String? _uploadedFileName;
+  Uint8List? _fileBytes; // For web
+  String? _filePath; // For mobile
 
   void _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+      withData: true, // Required for web
+      withReadStream: false, // Optional for large files
+    );
+
     if (result != null) {
       setState(() {
-        _uploadedFile = result.files.single.name;
+        _uploadedFileName = result.files.single.name;
+        if (kIsWeb) {
+          // For web, use bytes
+          _fileBytes = result.files.single.bytes;
+        } else {
+          // For mobile, use file path
+          _filePath = result.files.single.path;
+        }
       });
+    }
+  }
+
+  void _viewFile() {
+    if (kIsWeb) {
+      // Web: Display file from bytes
+      if (_fileBytes != null) {
+        showDialog(
+          context: context,
+          builder: (context) => Dialog(
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              width: 300,
+              height: 400,
+              child: _uploadedFileName!.endsWith('.jpg') ||
+                      _uploadedFileName!.endsWith('.png') ||
+                      _uploadedFileName!.endsWith('.jpeg')
+                  ? Image.memory(
+                      _fileBytes!,
+                      fit: BoxFit.cover,
+                    )
+                  : Center(
+                      child: const Text(
+                        'Cannot preview this file type.',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+            ),
+          ),
+        );
+      }
+    } else {
+      // Mobile: Display file from path
+      if (_filePath != null) {
+        showDialog(
+          context: context,
+          builder: (context) => Dialog(
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              width: 300,
+              height: 400,
+              child: _filePath!.endsWith('.jpg') ||
+                      _filePath!.endsWith('.png') ||
+                      _filePath!.endsWith('.jpeg')
+                  ? Image.file(
+                      io.File(_filePath!),
+                      fit: BoxFit.cover,
+                    )
+                  : Center(
+                      child: const Text(
+                        'Cannot preview this file type.',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -96,7 +173,10 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
                           backgroundColor: Colors.blueAccent,
                         ),
                         child: const Text('Submit',
-                            style: TextStyle(fontSize: 16)),
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
                       ),
                     ),
                   ],
@@ -341,16 +421,23 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
         const SizedBox(height: 8.0),
         Wrap(
           spacing: 8.0,
-          children: options
-              .map((option) => ChoiceChip(
-                    label: Text(option),
-                    selected: false,
-                    onSelected: (selected) {},
-                    labelStyle: const TextStyle(color: Colors.blueAccent),
-                    backgroundColor: Colors.blue[100],
-                    selectedColor: Colors.blueAccent,
-                  ))
-              .toList(),
+          children: options.map((option) {
+            final isSelected = _selectedOption == option;
+            return ChoiceChip(
+              label: Text(option),
+              selected: isSelected,
+              onSelected: (selected) {
+                setState(() {
+                  _selectedOption = selected ? option : null;
+                });
+              },
+              labelStyle: TextStyle(
+                color: isSelected ? Colors.white : Colors.blueAccent,
+              ),
+              backgroundColor: Colors.blue[100],
+              selectedColor: Colors.blueAccent,
+            );
+          }).toList(),
         ),
         const SizedBox(height: 16.0),
       ],
@@ -375,13 +462,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
                   const Text('Upload', style: TextStyle(color: Colors.white)),
             ),
             ElevatedButton(
-              onPressed: _uploadedFile != null
-                  ? () {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Viewing file: $_uploadedFile'),
-                      ));
-                    }
-                  : null,
+              onPressed: _uploadedFileName != null ? _viewFile : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
               ),
@@ -389,11 +470,11 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
             ),
           ],
         ),
-        if (_uploadedFile != null)
+        if (_uploadedFileName != null)
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
-              'Uploaded File: $_uploadedFile',
+              'Uploaded File: ${_uploadedFileName!.split('/').last}',
               style: const TextStyle(color: Colors.grey),
             ),
           ),
