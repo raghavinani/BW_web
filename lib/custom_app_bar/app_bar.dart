@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'app_links.dart';
+// import 'side_bar.dart';
 import 'package:login/RetailerEntry.dart';
 import 'package:login/content.dart';
 
@@ -29,8 +31,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           },
           child: Image.asset(
             'assets/logo.jpeg',
-            fit: BoxFit.fitWidth, // Makes the logo wider
-            width: 500, // Set a fixed width to make it wider
+            fit: BoxFit.fitWidth,
+            width: 500,
             height: kToolbarHeight,
           ),
         ),
@@ -39,10 +41,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildDropdownMenu(context, 'Transactions', _transactionLinks),
-                _buildDropdownMenu(context, 'Reports', _reportLinks),
-                _buildDropdownMenu(context, 'Masters', _masterLinks),
-                _buildDropdownMenu(context, 'Miscellaneous', _miscLinks),
+                _buildDropdownMenu(context, 'Transactions', transactionLinks),
+                _buildDropdownMenu(context, 'Reports', reportLinks),
+                _buildDropdownMenu(context, 'Masters', masterLinks),
+                _buildDropdownMenu(context, 'Miscellaneous', miscLinks),
               ],
             )
           : null,
@@ -54,7 +56,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: const Icon(Icons.list, color: Colors.white),
           onPressed: () {
-            _showSidebar(context);
+            Scaffold.of(context).openEndDrawer(); // Open right sidebar
           },
         ),
         IconButton(
@@ -91,24 +93,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  void _showSidebar(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          color: const Color.fromARGB(255, 46, 112, 226),
-          child: ListView(
-            children: [
-              _buildSidebarMenu(context, 'Transactions', _transactionLinks),
-              _buildSidebarMenu(context, 'Reports', _reportLinks),
-              _buildSidebarMenu(context, 'Masters', _masterLinks),
-              _buildSidebarMenu(context, 'Miscellaneous', _miscLinks),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // void _openSidebar(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     builder: (context) => const CustomSidebar(),
+  //   );
+  // }
 
   Widget _buildDropdownMenu(
     BuildContext context,
@@ -143,29 +134,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ? _buildSubMenu(context, link)
               : Text(link['title']),
         );
-      }).toList(),
-    );
-  }
-
-  Widget _buildSidebarMenu(
-    BuildContext context,
-    String title,
-    List<Map<String, dynamic>> links,
-  ) {
-    return ExpansionTile(
-      title: Padding(
-        padding:
-            const EdgeInsets.only(left: 16.0), // Shift the title slightly right
-        child: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white, // Set the title color to black
-            fontWeight: FontWeight.bold, // Bold the title
-          ),
-        ),
-      ),
-      children: links.map<Widget>((link) {
-        return _buildSubMenu(context, link);
       }).toList(),
     );
   }
@@ -218,160 +186,3 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(70);
 }
-
-final _transactionLinks = [
-  {
-    'title': 'Financial Accounts',
-    'subLinks': [
-      'Token Scan',
-      'Balance Confirmation',
-      'Invoice Acknowledgement',
-      'Ever White Coupon Generation',
-      '194Q Detail Entry',
-      'Token Scan Details',
-      'Token Scan Report',
-      'Token Scan New',
-    ],
-  },
-  {
-    'title': 'Depot Order',
-    'subLinks': [
-      'Secondary Sale Capture',
-      'Order Update',
-      'Order Entry',
-    ],
-  },
-  {
-    'title': 'Retailer',
-    'subLinks': [
-      'Rural Retailer Entry/Update',
-      'Retailer Registration',
-    ],
-  },
-  {
-    'title': 'Sales Force',
-    'subLinks': [
-      'Notification Sent Details',
-      'User Rating',
-    ],
-  },
-  {
-    'title': 'Mission Udaan',
-    'subLinks': [
-      'Invoice Cancellation in Bulk',
-      'Secondary Sales Invoice Entry',
-    ],
-  },
-];
-
-final _reportLinks = [
-  {
-    'title': 'SAP Reports',
-    'subLinks': [
-      'Day Summary',
-      'Day wise Details',
-      'Day Summary Qty/Value Wise',
-      'Sales-Purchase-wise Packaging-wise',
-      'Year on Year Comparison',
-    ],
-  },
-  {
-    'title': 'General Reports',
-    'subLinks': [
-      'Pending freight report',
-      'Account statement',
-      'Contact us',
-      'Information document',
-    ],
-  },
-  {
-    'title': 'MIS Reports',
-    'subLinks': [
-      'Purchaser aging report (SAP)',
-    ],
-  },
-  {
-    'title': 'Sales Reports',
-    'subLinks': [
-      'Product catg-wise sales',
-      'Sales growth overview YTD/MTD',
-    ],
-  },
-  {
-    'title': 'Scheme/Discount',
-    'subLinks': [
-      'Purchaser and retailer disbursement details',
-      'RPL Outlet tracker',
-      'Scheme Disbursement View',
-    ],
-  },
-  {
-    'title': 'Retailer',
-    'subLinks': [
-      'Retailer report',
-      'Retailer KYC details',
-    ],
-  },
-  {
-    'title': 'Chart Reports',
-    'subLinks': [
-      'Sales overview',
-    ],
-  },
-  {
-    'title': 'Mobile Reports',
-    'subLinks': [
-      'Purchaser 360',
-    ],
-  },
-  {
-    'title': 'Secondary Sale',
-    'subLinks': [
-      'Stock & RollOut data (Tally)',
-      'Secondary Sale (Tally)',
-      'Stock Data (Tally)',
-      'Retailers Sales Report',
-      'Retailer Target Vs Actual',
-      'My Network',
-      'Tally Data Customer Wise',
-    ]
-  },
-  {
-    'title': 'Scheme Details',
-    'subLinks': [
-      'Schemes Summary',
-    ]
-  },
-];
-
-final _masterLinks = [
-  {
-    'title': 'Customer',
-    'subLinks': [
-      'Purchaser Profile',
-      'TAN No Update',
-      'SAP Invoice Printing',
-    ],
-  },
-  {
-    'title': 'Misc Master',
-    'subLinks': [
-      'Pin Code Master',
-      'Profile Photo',
-    ],
-  },
-  {
-    'title': 'Credit Note',
-    'subLinks': [
-      'Guarantor Orc Entry',
-      'Guarantor Orc View',
-    ],
-  },
-];
-
-final _miscLinks = [
-  {'title': 'Change Password'},
-  {'title': 'Software Download'},
-  {'title': 'Photo Gallery'},
-  {'title': 'SMS Query Code Help'},
-];

@@ -3,7 +3,8 @@ import 'dart:typed_data'; // For web file handling
 import 'package:flutter/foundation.dart'; // To check platform
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:login/app_bar.dart';
+import 'package:login/custom_app_bar/side_bar.dart';
+import 'package:login/custom_app_bar/app_bar.dart';
 
 void main() {
   runApp(const RetailerRegistrationApp());
@@ -120,6 +121,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
+      endDrawer: const CustomSidebar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
