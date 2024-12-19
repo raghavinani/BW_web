@@ -192,37 +192,66 @@ class HomePage extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(AppConfig.boxPadding),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: AppConfig.titleFontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+          Center(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: AppConfig.titleFontSize,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
           ),
           const SizedBox(height: 16),
           // Add Graph Icon
-          const Icon(Icons.show_chart,
-              size: 36, color: Colors.blue), // Graph icon
+          const Center(
+            child: Icon(Icons.auto_graph, size: 80, color: Colors.blue),
+          ),
           const SizedBox(height: 16),
           // Values below the graph icon
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: values
-                .map((value) => Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
-                      child: Text(
-                        value,
-                        style: const TextStyle(
-                          fontSize: AppConfig.valueFontSize,
-                          color: Colors.black,
+          Expanded(
+            child: ListView.builder(
+              itemCount: values.length,
+              itemBuilder: (context, index) {
+                final valueParts = values[index].split(':');
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.remove,
+                          size: 16, color: Colors.grey), // Dash-like icon
+                      const SizedBox(width: 8),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          valueParts[0].trim(),
+                          style: const TextStyle(
+                            fontSize: AppConfig.valueFontSize,
+                            color: Colors.black54,
+                          ),
                         ),
                       ),
-                    ))
-                .toList(),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          valueParts[1].trim(),
+                          style: const TextStyle(
+                            fontSize: AppConfig.valueFontSize,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -250,89 +279,97 @@ class HomePage extends StatelessWidget {
       'Feedback',
     ];
 
-    return Container(
-      width: isSmallScreen
-          ? double.infinity
-          : screenWidth * 0.4, // Adjust width for larger screens
-      height: isSmallScreen
-          ? screenHeight / 2
-          : screenHeight / 2, // Adjust height for larger screens
-      decoration: BoxDecoration(
-        color: AppConfig.boxBackgroundColor,
-        borderRadius: BorderRadius.circular(AppConfig.borderRadius),
-        boxShadow: [
-          BoxShadow(
-            color: AppConfig.boxShadowColor,
-            blurRadius: AppConfig.shadowBlurRadius,
-            spreadRadius: AppConfig.shadowSpreadRadius,
-            offset: const Offset(2, 2),
-          ),
-        ],
+    return Padding(
+      padding: EdgeInsets.only(
+        left: isSmallScreen ? 0 : AppConfig.boxPadding * 2,
+        top: AppConfig.boxPadding,
+        bottom: AppConfig.boxPadding * 2,
       ),
-      padding: const EdgeInsets.all(AppConfig.boxPadding),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Quick Menu',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: SingleChildScrollView(
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // 3x3 grid
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemCount: iconNames.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      if (iconNames[index] == 'Retailer Registration') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const RetailerRegistrationApp(),
-                          ),
-                        );
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppConfig.borderColor),
-                        borderRadius:
-                            BorderRadius.circular(AppConfig.borderRadius),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.analytics,
-                              size: 36, color: Colors.black),
-                          const SizedBox(height: 8),
-                          Text(
-                            iconNames[index],
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+      child: Align(
+        alignment: isSmallScreen ? Alignment.center : Alignment.topLeft,
+        child: Container(
+          width: isSmallScreen
+              ? double.infinity
+              : screenWidth * 0.4, // Adjust width for larger screens
+          height: screenHeight / 2, // Fixed height
+          decoration: BoxDecoration(
+            color: AppConfig.boxBackgroundColor,
+            borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+            boxShadow: [
+              BoxShadow(
+                color: AppConfig.boxShadowColor,
+                blurRadius: AppConfig.shadowBlurRadius,
+                spreadRadius: AppConfig.shadowSpreadRadius,
+                offset: const Offset(2, 2),
               ),
-            ),
+            ],
           ),
-        ],
+          padding: const EdgeInsets.all(AppConfig.boxPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Quick Menu',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3, // 3x3 grid
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
+                    itemCount: iconNames.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          if (iconNames[index] == 'Retailer Registration') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const RetailerRegistrationApp(),
+                              ),
+                            );
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: AppConfig.borderColor),
+                            borderRadius:
+                                BorderRadius.circular(AppConfig.borderRadius),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.analytics,
+                                  size: 36, color: Colors.black),
+                              const SizedBox(height: 8),
+                              Text(
+                                iconNames[index],
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
