@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_links.dart';
 import 'package:login/RetailerEntry.dart';
+import 'package:login/QR_scanner.dart';
 
 class CustomSidebar extends StatelessWidget {
   const CustomSidebar({super.key});
@@ -84,6 +85,11 @@ class CustomSidebar extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => const RetailerRegistrationPage()),
+          );
+        } else if (value == 'Token Scan') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const QrCodeScanner()),
           );
         } else {
           ScaffoldMessenger.of(context)

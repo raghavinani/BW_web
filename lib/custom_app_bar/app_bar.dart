@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login/QR_scanner.dart';
 import 'app_links.dart';
 // import 'side_bar.dart';
 import 'package:login/RetailerEntry.dart';
@@ -122,6 +123,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             MaterialPageRoute(
                 builder: (context) => const RetailerRegistrationApp()),
           );
+        } else if (value == 'Token Scan') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const QrCodeScanner()),
+          );
         } else {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('$value clicked')));
@@ -168,6 +174,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => const RetailerRegistrationPage()),
+          );
+        } else if (value == 'Token Scan') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const QrCodeScanner()),
           );
         } else {
           ScaffoldMessenger.of(context)
