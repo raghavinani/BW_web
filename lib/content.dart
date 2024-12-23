@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:login/RetailerEntry.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
+import 'package:login/carousel.dart';
 
 void main() {
   runApp(const ContentPage());
@@ -91,7 +92,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Heading bar
+            // Static Heading bar
             Container(
               padding: const EdgeInsets.all(AppConfig.boxPadding),
               color: AppConfig.boxBackgroundColor,
@@ -107,57 +108,72 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-            // Main content
+            // Scrollable content
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(AppConfig.boxPadding),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      // Boxes layout adjustment based on screen size
-                      if (isSmallScreen)
-                        Column(
-                          children: AppConfig.boxContents.entries
-                              .map((entry) => _buildBox(
-                                    title: entry.key,
-                                    values: entry.value,
-                                    height: (screenHeight / 2) -
-                                        (AppConfig.boxPadding * 2),
-                                    width: screenWidth,
-                                  ))
-                              .toList(),
-                        )
-                      else
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: AppConfig.boxContents.entries
-                              .map((entry) => _buildBox(
-                                    title: entry.key,
-                                    values: entry.value,
-                                    width: (screenWidth / 4) -
-                                        (AppConfig.boxPadding * 2),
-                                    height: screenHeight / 2,
-                                  ))
-                              .toList(),
-                        ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Carousel with padding
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: AppConfig.boxPadding,
+                      ),
+                      child: const CustomCarousel(),
+                    ),
 
-                      const SizedBox(height: 16),
+                    // Main content
+                    Padding(
+                      padding: const EdgeInsets.all(AppConfig.boxPadding),
+                      child: Column(
+                        children: [
+                          // Boxes layout adjustment based on screen size
+                          if (isSmallScreen)
+                            Column(
+                              children: AppConfig.boxContents.entries
+                                  .map((entry) => _buildBox(
+                                        title: entry.key,
+                                        values: entry.value,
+                                        height: (screenHeight / 2) -
+                                            (AppConfig.boxPadding * 2),
+                                        width: screenWidth,
+                                      ))
+                                  .toList(),
+                            )
+                          else
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: AppConfig.boxContents.entries
+                                  .map((entry) => _buildBox(
+                                        title: entry.key,
+                                        values: entry.value,
+                                        width: (screenWidth / 4) -
+                                            (AppConfig.boxPadding * 2),
+                                        height: screenHeight / 2,
+                                      ))
+                                  .toList(),
+                            ),
 
-                      // Quick Menu layout adjustment based on screen size
-                      if (isSmallScreen)
-                        _buildQuickMenu(
-                          isSmallScreen: isSmallScreen,
-                          screenWidth: screenWidth,
-                          screenHeight: screenHeight,
-                        )
-                      else
-                        _buildQuickMenu(
-                          isSmallScreen: isSmallScreen,
-                          screenWidth: screenWidth,
-                          screenHeight: screenHeight,
-                        ),
-                    ],
-                  ),
+                          const SizedBox(height: 16),
+
+                          // Quick Menu layout adjustment based on screen size
+                          if (isSmallScreen)
+                            _buildQuickMenu(
+                              isSmallScreen: isSmallScreen,
+                              screenWidth: screenWidth,
+                              screenHeight: screenHeight,
+                            )
+                          else
+                            _buildQuickMenu(
+                              isSmallScreen: isSmallScreen,
+                              screenWidth: screenWidth,
+                              screenHeight: screenHeight,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
