@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login/QR_scanner.dart';
 import 'app_links.dart';
-// import 'side_bar.dart';
+import 'package:login/profile_page.dart';
 import 'package:login/RetailerEntry.dart';
 import 'package:login/content.dart';
 
@@ -64,31 +64,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: const Icon(Icons.notifications, color: Colors.white),
           onPressed: () {},
         ),
-        PopupMenuButton<String>(
+        IconButton(
           icon: const CircleAvatar(
             backgroundColor: Colors.white,
             child: Icon(Icons.person, color: Colors.blue),
           ),
-          onSelected: (value) {
-            if (value == 'Home') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ContentPage()),
-              );
-            } else if (value == 'Logout') {
-              // Handle logout logic
-            }
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfilePage()),
+            );
           },
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'Home',
-              child: Text('Home'),
-            ),
-            const PopupMenuItem(
-              value: 'Logout',
-              child: Text('Logout'),
-            ),
-          ],
         ),
       ],
     );
