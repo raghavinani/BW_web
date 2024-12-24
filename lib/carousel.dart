@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-class CustomCarousel extends StatelessWidget {
+class CustomCarousel extends StatefulWidget {
   const CustomCarousel({super.key});
 
   @override
+  State<CustomCarousel> createState() => _CustomCarouselState();
+}
+
+class _CustomCarouselState extends State<CustomCarousel> {
+  static const double smallScreenBreakpoint = 800.0;
+
+  final List<String> imagePaths = List.generate(
+    6,
+    (index) => 'assets/carousel/index_$index.jpg',
+  );
+
+  int currentIndex = 0; // Track the current slide index
+
+  @override
   Widget build(BuildContext context) {
-    final List<String> imagePaths = List.generate(
-      6,
-      (index) => 'assets/carousel/index_$index.jpg',
-    );
+    final screenHeight = MediaQuery.of(context).size.height;
+    final carouselHeight = screenHeight < smallScreenBreakpoint
+        ? screenHeight / 3
+        : (2 * screenHeight) / 5;
 
     return Column(
       children: [
@@ -37,13 +51,18 @@ class CustomCarousel extends StatelessWidget {
             );
           },
           options: CarouselOptions(
-            height: MediaQuery.of(context).size.height / 3,
+            height: carouselHeight,
             autoPlay: true,
             enlargeCenterPage: true,
             viewportFraction: 0.8,
             aspectRatio: 16 / 9,
             autoPlayInterval: const Duration(seconds: 3),
             autoPlayAnimationDuration: const Duration(milliseconds: 800),
+            onPageChanged: (index, reason) {
+              setState(() {
+                currentIndex = index; // Update current index on page change
+              });
+            },
           ),
         ),
         const SizedBox(height: 16),
@@ -54,10 +73,12 @@ class CustomCarousel extends StatelessWidget {
             (index) => AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               margin: const EdgeInsets.symmetric(horizontal: 4),
-              height: 8,
-              width: 8,
+              height: currentIndex == index ? 12 : 8,
+              width: currentIndex == index ? 12 : 8,
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: currentIndex == index
+                    ? const Color.fromARGB(255, 211, 80, 234)
+                    : Colors.grey,
                 shape: BoxShape.circle,
               ),
             ),
