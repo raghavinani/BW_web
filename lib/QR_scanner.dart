@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:login/profile_page.dart';
+import 'package:login/content.dart';
+import 'package:login/bottom_nav_bar_mobile.dart';
 
 void main() {
   runApp(const QrCodeScanner());
@@ -31,6 +34,30 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = Theme.of(context).platform == TargetPlatform.iOS ||
+        Theme.of(context).platform == TargetPlatform.android;
+
+    int _selectedIndex = 1;
+
+    void _onItemTapped(int index) {
+      if (index == 0) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ContentPage()),
+        );
+      } else if (index == 1) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const QrCodeScanner()),
+        );
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilePage()),
+        );
+      }
+    }
+
     return Scaffold(
       appBar: const CustomAppBar(),
       endDrawer: const CustomSidebar(),
@@ -91,6 +118,15 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      bottomNavigationBar: isMobile
+          ? CustomBottomNavigationBar(
+              currentIndex: _selectedIndex,
+              onItemTapped: (index) {
+                _selectedIndex = index;
+                _onItemTapped(index);
+              },
+            )
+          : null,
     );
   }
 }

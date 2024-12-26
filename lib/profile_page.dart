@@ -1,163 +1,197 @@
 import 'package:flutter/material.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
+import 'package:login/content.dart';
+import 'package:login/bottom_nav_bar_mobile.dart';
+import 'package:login/QR_scanner.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = Theme.of(context).platform == TargetPlatform.iOS ||
+        Theme.of(context).platform == TargetPlatform.android;
+
+    int _selectedIndex = 2;
+
+    void _onItemTapped(int index) {
+      if (index == 0) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ContentPage()),
+        );
+      } else if (index == 1) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const QrCodeScanner()),
+        );
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilePage()),
+        );
+      }
+    }
+
     return Scaffold(
-        appBar: const CustomAppBar(),
-        endDrawer: const CustomSidebar(),
-        body: Container(
-            color: Colors.blue.shade100,
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              // Static Heading bar
-              Container(
-                padding: const EdgeInsets.all(16),
-                color: Colors.white,
-                child: const Center(
-                  child: Text(
-                    'Account',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+      appBar: const CustomAppBar(),
+      endDrawer: const CustomSidebar(),
+      body: Container(
+          color: Colors.blue.shade100,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // Static Heading bar
+            Container(
+              padding: const EdgeInsets.all(16),
+              color: Colors.white,
+              child: const Center(
+                child: Text(
+                  'Account',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
                 ),
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // My Profile Section
-                        const Text(
-                          'My Profile',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // My Profile Section
+                      const Text(
+                        'My Profile',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Colors.grey.shade200,
-                          ),
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundColor: Colors.grey.shade400,
-                                child: const Icon(Icons.person,
-                                    size: 30, color: Colors.white),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Parikshit Kathe',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.grey.shade200,
+                        ),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 30,
+                              backgroundColor: Colors.grey.shade400,
+                              child: const Icon(Icons.person,
+                                  size: 30, color: Colors.white),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Raghav',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const Text(
+                                    '7340031941',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Chip(
+                                        label: const Text('Painter'),
+                                        backgroundColor: Colors.blue.shade100,
                                       ),
-                                    ),
-                                    const Text(
-                                      '8828170252',
-                                      style: TextStyle(
-                                        color: Colors.grey,
+                                      const SizedBox(width: 8),
+                                      Chip(
+                                        label: const Text('38% Completed'),
+                                        backgroundColor: Colors.red.shade100,
                                       ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: [
-                                        Chip(
-                                          label: const Text('Painter'),
-                                          backgroundColor: Colors.blue.shade100,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Chip(
-                                          label: const Text('38% Completed'),
-                                          backgroundColor: Colors.red.shade100,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                              IconButton(
-                                icon:
-                                    const Icon(Icons.edit, color: Colors.blue),
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text('Edit Profile Clicked')),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Edit Profile Clicked')),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 32),
-                        // Account Section
-                        const Text(
-                          'Account',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+                      ),
+                      const SizedBox(height: 32),
+                      // Account Section
+                      const Text(
+                        'Account',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
-                        const SizedBox(height: 16),
-                        _buildAccountField(
-                            context, 'Address Details', Icons.location_on),
-                        _buildAccountField(
-                            context, 'Manage Bank', Icons.account_balance),
-                        _buildAccountField(context, 'Manage UPI',
-                            Icons.account_balance_wallet),
-                        _buildAccountField(
-                            context, 'KYC Details', Icons.vpn_key),
-                        _buildAccountField(
-                            context, 'Misc. Details', Icons.settings),
-                        const SizedBox(height: 32),
-                        // Language Section
-                        const Text(
-                          'Language',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildAccountField(
+                          context, 'Address Details', Icons.location_on),
+                      _buildAccountField(
+                          context, 'Manage Bank', Icons.account_balance),
+                      _buildAccountField(
+                          context, 'Manage UPI', Icons.account_balance_wallet),
+                      _buildAccountField(context, 'KYC Details', Icons.vpn_key),
+                      _buildAccountField(
+                          context, 'Misc. Details', Icons.settings),
+                      const SizedBox(height: 32),
+                      // Language Section
+                      const Text(
+                        'Language',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
-                        const SizedBox(height: 16),
-                        _buildAccountField(
-                            context, 'Select Language', Icons.language,
-                            trailing: const Text('English')),
-                        const SizedBox(height: 32),
-                        // About Us Section
-                        const Text(
-                          'About Us',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildAccountField(
+                          context, 'Select Language', Icons.language,
+                          trailing: const Text('English')),
+                      const SizedBox(height: 32),
+                      // About Us Section
+                      const Text(
+                        'About Us',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
-                        const SizedBox(height: 16),
-                        _buildAccountField(
-                            context, 'View About Us', Icons.info),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildAccountField(context, 'View About Us', Icons.info),
+                    ],
                   ),
                 ),
-              )
-            ])));
+              ),
+            )
+          ])),
+      bottomNavigationBar: isMobile
+          ? CustomBottomNavigationBar(
+              currentIndex: _selectedIndex,
+              onItemTapped: (index) {
+                _selectedIndex = index;
+                _onItemTapped(index);
+              },
+            )
+          : null,
+    );
   }
 
   Widget _buildAccountField(BuildContext context, String title, IconData icon,

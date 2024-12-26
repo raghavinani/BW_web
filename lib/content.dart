@@ -3,6 +3,10 @@ import 'package:login/RetailerEntry.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
 import 'package:login/carousel.dart';
+import 'package:login/QR_scanner.dart';
+import 'package:login/profile_page.dart';
+import 'package:login/bottom_nav_bar_mobile.dart';
+import 'package:flutter/foundation.dart';
 
 void main() {
   runApp(const ContentPage());
@@ -15,7 +19,10 @@ class ContentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const HomePage(),
+      home: defaultTargetPlatform == TargetPlatform.iOS ||
+              defaultTargetPlatform == TargetPlatform.android
+          ? const HomeMobile()
+          : const HomePage(),
     );
   }
 }
@@ -73,6 +80,306 @@ class AppConfig {
       'Distemper: 0',
     ],
   };
+}
+
+class HomeMobile extends StatelessWidget {
+  const HomeMobile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    int _selectedIndex = 0;
+
+    void _onItemTapped(int index) {
+      if (index == 0) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ContentPage()),
+        );
+      } else if (index == 1) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const QrCodeScanner()),
+        );
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilePage()),
+        );
+      }
+    }
+
+    return Scaffold(
+      appBar: const CustomAppBar(),
+      endDrawer: const CustomSidebar(),
+      body: Container(
+        color: Colors.blue.shade600,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Static Heading bar
+            Container(
+              padding: const EdgeInsets.all(AppConfig.boxPadding),
+              color: AppConfig.boxBackgroundColor,
+              child: const Center(
+                child: Text(
+                  'Birla White',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+
+            // Scrollable content
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Carousel with padding
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: AppConfig.boxPadding,
+                      ),
+                      child: const CustomCarousel(),
+                    ),
+
+                    // Main content
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          // Boxes layout for mobile
+                          Column(
+                            children: AppConfig.boxContents.entries
+                                .map((entry) => _buildBox(
+                                      title: entry.key,
+                                      values: entry.value,
+                                      height: screenHeight / 4,
+                                      width: screenWidth,
+                                    ))
+                                .toList(),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // Quick Menu for mobile
+                          _buildQuickMenu(
+                            screenWidth: screenWidth,
+                            screenHeight: screenHeight / 3,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onItemTapped: (index) {
+          _selectedIndex = index;
+          _onItemTapped(index);
+        },
+      ),
+    );
+  }
+
+  // Widget for building individual boxes
+  Widget _buildBox({
+    required String title,
+    required List<String> values,
+    required double width,
+    required double height,
+  }) {
+    return Container(
+      width: width,
+      height: height,
+      margin: const EdgeInsets.only(bottom: AppConfig.boxPadding),
+      decoration: BoxDecoration(
+        color: AppConfig.boxBackgroundColor,
+        borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+        boxShadow: [
+          BoxShadow(
+            color: AppConfig.boxShadowColor,
+            blurRadius: AppConfig.shadowBlurRadius,
+            spreadRadius: AppConfig.shadowSpreadRadius,
+            offset: const Offset(2, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(AppConfig.boxPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: AppConfig.titleFontSize,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Center(
+            child: Icon(Icons.auto_graph, size: 80, color: Colors.blue),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: values.length,
+              itemBuilder: (context, index) {
+                final valueParts = values[index].split(':');
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.remove,
+                          size: 16, color: Colors.grey), // Dash-like icon
+                      const SizedBox(width: 8),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          valueParts[0].trim(),
+                          style: const TextStyle(
+                            fontSize: AppConfig.valueFontSize,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          valueParts[1].trim(),
+                          style: const TextStyle(
+                            fontSize: AppConfig.valueFontSize,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Widget for building the quick menu
+  Widget _buildQuickMenu({
+    required double screenWidth,
+    required double screenHeight,
+  }) {
+    final iconNames = [
+      'Retailer Registration',
+      'Order History',
+      'Sales Report',
+      'Inventory',
+      'Settings',
+      'Help Center',
+      'Customer Support',
+      'Analytics',
+      'Promotions',
+      'Account Management',
+      'Delivery Status',
+      'Feedback',
+    ];
+
+    return Container(
+      width: screenWidth,
+      height: screenHeight,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 6.0,
+            spreadRadius: 2.0,
+            offset: const Offset(2, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Quick Menu',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              itemCount: iconNames.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    if (iconNames[index] == 'Retailer Registration') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RetailerRegistrationApp(),
+                        ),
+                      );
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.analytics,
+                            size: 36, color: Colors.black),
+                        const SizedBox(height: 8),
+                        Text(
+                          iconNames[index],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontSize: 12, color: Colors.black),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class HomePage extends StatelessWidget {
@@ -230,6 +537,7 @@ class HomePage extends StatelessWidget {
           // Values below the graph icon
           Expanded(
             child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: values.length,
               itemBuilder: (context, index) {
                 final valueParts = values[index].split(':');
