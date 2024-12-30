@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'app_links.dart';
 import 'package:login/RetailerEntry.dart';
 import 'package:login/QR_scanner.dart';
+import 'package:login/order_update.dart';
 
 class CustomSidebar extends StatelessWidget {
   const CustomSidebar({super.key});
@@ -90,6 +91,11 @@ class CustomSidebar extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const QrCodeScanner()),
+          );
+        } else if (value == 'Order Update') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const OrderUpdate()),
           );
         } else {
           ScaffoldMessenger.of(context)

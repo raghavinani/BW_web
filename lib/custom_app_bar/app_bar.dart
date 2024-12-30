@@ -4,6 +4,7 @@ import 'app_links.dart';
 import 'package:login/profile_page.dart';
 import 'package:login/RetailerEntry.dart';
 import 'package:login/content.dart';
+import 'package:login/order_update.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -114,6 +115,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             context,
             MaterialPageRoute(builder: (context) => const QrCodeScanner()),
           );
+        } else if (value == 'Order Update') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const OrderUpdate()),
+          );
         } else {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('$value clicked')));
@@ -165,6 +171,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const QrCodeScanner()),
+          );
+        } else if (value == 'Order Update') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const OrderUpdate()),
           );
         } else {
           ScaffoldMessenger.of(context)

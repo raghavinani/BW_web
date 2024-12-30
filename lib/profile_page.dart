@@ -22,12 +22,12 @@ class ProfilePage extends StatelessWidget {
           MaterialPageRoute(builder: (context) => const ContentPage()),
         );
       } else if (index == 1) {
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const QrCodeScanner()),
         );
       } else if (index == 2) {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const ProfilePage()),
         );
@@ -108,7 +108,7 @@ class ProfilePage extends StatelessWidget {
                                   Row(
                                     children: [
                                       Chip(
-                                        label: const Text('Painter'),
+                                        label: const Text('Retailer'),
                                         backgroundColor: Colors.blue.shade100,
                                       ),
                                       const SizedBox(width: 8),
