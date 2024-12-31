@@ -91,7 +91,7 @@ class _OrderEntryState extends State<OrderUpdate> {
               color: Colors.white,
               child: const Center(
                 child: Text(
-                  'Order Entry',
+                  'Order Update',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

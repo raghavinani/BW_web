@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/QR_scanner.dart';
+import 'package:login/order_entry.dart';
 import 'app_links.dart';
 import 'package:login/profile_page.dart';
 import 'package:login/RetailerEntry.dart';
@@ -120,6 +121,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             context,
             MaterialPageRoute(builder: (context) => const OrderUpdate()),
           );
+        } else if (value == 'Order Entry') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const OrderEntry()),
+          );
         } else {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text('$value clicked')));
@@ -176,6 +182,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const OrderUpdate()),
+          );
+        } else if (value == 'Order Entry') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const OrderEntry()),
           );
         } else {
           ScaffoldMessenger.of(context)

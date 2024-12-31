@@ -3,6 +3,7 @@ import 'app_links.dart';
 import 'package:login/RetailerEntry.dart';
 import 'package:login/QR_scanner.dart';
 import 'package:login/order_update.dart';
+import 'package:login/order_entry.dart';
 
 class CustomSidebar extends StatelessWidget {
   const CustomSidebar({super.key});
@@ -96,6 +97,11 @@ class CustomSidebar extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const OrderUpdate()),
+          );
+        } else if (value == 'Order Entry') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const OrderEntry()),
           );
         } else {
           ScaffoldMessenger.of(context)
