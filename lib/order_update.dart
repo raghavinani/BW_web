@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:core';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
 
@@ -43,6 +44,30 @@ class _OrderEntryState extends State<OrderUpdate> {
     'Wall Care Putty'
   ];
   final List<String> unloadPointOptions = ['Delhi', 'Mumbai', 'Pune'];
+
+  final Map<String, List<String>> productVariants = {
+    'White Cement': [
+      'White Cement - 1kg',
+      'White Cement - 5kg',
+      'White Cement - 10kg',
+      'White Cement - 50kg',
+      'White Cement - 100kg',
+      'White Cement - 500kg',
+      'White Cement - 1000kg',
+    ],
+    'WaterProof Putty': [
+      'WaterProof Putty - 1kg',
+      'WaterProof Putty - 5kg',
+      'WaterProof Putty - 10kg',
+      'WaterProof Putty - 50kg',
+    ],
+    'Wall Care Putty': [
+      'Wall Care Putty - 1kg',
+      'Wall Care Putty - 5kg',
+      'Wall Care Putty - 10kg',
+      'Wall Care Putty - 50kg',
+    ],
+  };
 
   List<Map<String, dynamic>> productList = [
     {'product': null, 'qty': null, 'scheduleDate': null},
@@ -211,11 +236,15 @@ class _OrderEntryState extends State<OrderUpdate> {
                                       Expanded(
                                         flex: 2,
                                         child: DropdownButtonFormField<String>(
-                                          value: product['product'],
-                                          items: prod1Options
-                                              .map((option) => DropdownMenuItem(
-                                                  value: option,
-                                                  child: Text(option)))
+                                          value: product['product'] as String?,
+                                          items: (selectedProd1 != null
+                                                  ? productVariants[
+                                                      selectedProd1]!
+                                                  : [])
+                                              .map((option) =>
+                                                  DropdownMenuItem<String>(
+                                                      value: option,
+                                                      child: Text(option)))
                                               .toList(),
                                           onChanged: (value) {
                                             setState(() {
@@ -354,11 +383,7 @@ class _OrderEntryState extends State<OrderUpdate> {
                               const SizedBox(height: 16.0),
                               Center(
                                   child: ElevatedButton(
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Submitted')),
-                                  );
-                                },
+                                onPressed: _handleSubmit,
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20.0, vertical: 15.0),
@@ -399,34 +424,172 @@ class _OrderEntryState extends State<OrderUpdate> {
     );
   }
 
-  Widget _buildProductDropdown(
-      {required String label,
-      required List<String> options,
-      ValueChanged<String?>? onChanged}) {
+  Widget _buildProductDropdown({
+    required String label,
+    required List<String> options,
+    ValueChanged<String?>? onChanged,
+  }) {
+    // Ensure the value for 'Product' is not null when it's being used
+    String? dropdownValue = label == 'Product'
+        ? selectedProd1
+        : (label == 'Document NO.' ? selectedDocuNum : selectedUnloadPoint);
+
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         border: const OutlineInputBorder(),
       ),
-      value: label == 'Product'
-          ? selectedProd1
-          : (label == 'Document NO.' ? selectedDocuNum : selectedUnloadPoint),
+      value: dropdownValue,
       items: options
           .map((option) => DropdownMenuItem(value: option, child: Text(option)))
           .toList(),
-      onChanged: onChanged ??
-          (value) {
-            setState(() {
-              if (label == 'Product') {
-                selectedProd1 = value;
-              } else if (label == 'Document NO.') {
-                selectedDocuNum = value;
-              } else {
-                selectedUnloadPoint = value;
+      onChanged: (value) {
+        setState(() {
+          if (label == 'Product') {
+            if (selectedProd1 != null && selectedProd1 != value) {
+              // Check if any products have been added
+              double totalQtyMT = 0;
+              try {
+                totalQtyMT = double.parse(
+                  tableData1.firstWhere((row) =>
+                      row['Description'] == 'Total Order Qnty (MT)')['Lacs']!,
+                );
+              } catch (e) {
+                totalQtyMT = 0; // Default to 0 if there's an error parsing
               }
-            });
-          },
+
+              if (totalQtyMT > 0) {
+                // Show confirmation dialog
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Confirm Change'),
+                    content: const Text(
+                        'All the products you added before will be moved to bin. Do you want to proceed?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            selectedProd1 = value; // Update selected product
+                            productList = [
+                              {
+                                'product': null,
+                                'qty': null,
+                                'scheduleDate': null
+                              }
+                            ]; // Reset product list
+                            _updateCreditLimitTable(); // Reset the credit limit table
+                          });
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                // Directly update if no products were added
+                selectedProd1 = value;
+              }
+            } else {
+              selectedProd1 = value;
+            }
+          } else if (label == 'Document NO.') {
+            selectedDocuNum = value;
+          } else {
+            selectedUnloadPoint = value;
+            _updatePurchaserAddress(value);
+          }
+        });
+      },
+    );
+  }
+
+  // Function to extract KG from the product name (e.g., "50 kg" from "White Cement - 50 kg")
+  double _extractKgFromProduct(String productName) {
+    final regex = RegExp(r'(\d+)\s*kg'); // Regex to match kg value
+    final match = regex.firstMatch(productName);
+    return match != null ? double.parse(match.group(1)!) : 0.0;
+  }
+
+  // Submit button handler
+  void _handleSubmit() {
+    double totalAmount = 0;
+    List<Widget> productDetailsWidgets = [];
+
+    // Calculate the total amount and prepare the product detail widgets
+    for (var product in productList) {
+      if (product['qty'] != null && product['qty'] != '') {
+        double qty = double.parse(product['qty']);
+        double kg = _extractKgFromProduct(product['product']);
+        double price = kg * 1000 * qty; // Price per product
+
+        totalAmount += price;
+
+        // Add the product details to the list
+        productDetailsWidgets.add(Text(
+          '${product['product']} - ₹${price.toStringAsFixed(2)} (${kg}kg x $qty)',
+          style: const TextStyle(fontSize: 16),
+        ));
+      }
+    }
+
+    // Show the confirmation dialog with product details and total outstanding
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Bill Summary'),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min, // Make dialog size adaptive
+          children: [
+            ...productDetailsWidgets,
+            const SizedBox(height: 16.0),
+            Text(
+              'Total Outstanding: ₹${totalAmount.toStringAsFixed(2)}',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // On pressing "OK" button, show SnackBar and close the dialog
+              Navigator.of(context).pop(); // Close the dialog
+              // Delay showing the SnackBar to ensure dialog has closed
+              Future.delayed(Duration(milliseconds: 100), () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Order Submitted!')),
+                );
+              });
+              setState(() {
+                // Reset product list, you can adjust this to your needs
+                productList = [
+                  {'product': null, 'qty': null, 'scheduleDate': null}
+                ];
+              });
+            },
+            child: const Text('OK'),
+          ),
+          TextButton(
+            onPressed: () {
+              // On pressing "Update", allow user to update more products
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: const Text('Update'),
+          ),
+        ],
+      ),
     );
   }
 

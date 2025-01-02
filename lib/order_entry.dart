@@ -185,30 +185,42 @@ class _OrderEntryState extends State<OrderEntry> {
                                 ),
                                 const SizedBox(width: 8.0),
                                 Expanded(
-                                  child: Row(
-                                    children: [
-                                      _buildRoundedCheckbox(
-                                        'Rail',
-                                        isRailTransport,
-                                        (value) {
-                                          setState(() {
-                                            isRailTransport = value!;
-                                          });
-                                        },
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                      const Text(
+                                        'Mode of Transportation',
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                      const SizedBox(width: 16.0),
-                                      _buildRoundedCheckbox(
-                                        'Road',
-                                        !isRailTransport,
-                                        (value) {
-                                          setState(() {
-                                            isRailTransport = !value!;
-                                          });
-                                        },
+                                      const SizedBox(height: 4.0),
+                                      Row(
+                                        children: [
+                                          _buildRoundedCheckbox(
+                                            'Rail',
+                                            isRailTransport,
+                                            (value) {
+                                              setState(() {
+                                                isRailTransport = value!;
+                                              });
+                                            },
+                                          ),
+                                          const SizedBox(width: 16.0),
+                                          _buildRoundedCheckbox(
+                                            'Road',
+                                            !isRailTransport,
+                                            (value) {
+                                              setState(() {
+                                                isRailTransport = !value!;
+                                              });
+                                            },
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                    ])),
                               ],
                             ),
                           ],
@@ -404,11 +416,7 @@ class _OrderEntryState extends State<OrderEntry> {
                             const SizedBox(height: 16.0),
                             Center(
                                 child: ElevatedButton(
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Submitted')),
-                                );
-                              },
+                              onPressed: _handleSubmit,
                               style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20.0, vertical: 15.0),
@@ -448,23 +456,261 @@ class _OrderEntryState extends State<OrderEntry> {
     );
   }
 
-  Widget _buildProductDropdown(
-      {required String label,
-      required List<String> options,
-      ValueChanged<String?>? onChanged}) {
+  double _extractKgFromProduct(String productName) {
+    final regex = RegExp(r'(\d+)\s*kg'); // Regex to match kg value
+    final match = regex.firstMatch(productName);
+    return match != null ? double.parse(match.group(1)!) : 0.0;
+  }
+
+  // Submit button handler
+  void _handleSubmit() {
+    double totalAmount = 0;
+    List<Widget> productDetailsWidgets = [];
+
+    // Calculate the total amount and prepare the product detail widgets
+    for (var product in productList) {
+      if (product['qty'] != null && product['qty'] != '') {
+        double qty = double.parse(product['qty']);
+        double kg = _extractKgFromProduct(product['product']);
+        double price = kg * 1000 * qty; // Price per product
+
+        totalAmount += price;
+
+        // Add the product details to the list
+        productDetailsWidgets.add(Text(
+          '${product['product']} - ₹${price.toStringAsFixed(2)} (${kg}kg x $qty)',
+          style: const TextStyle(fontSize: 16),
+        ));
+      }
+    }
+
+    // Show the confirmation dialog with product details and total outstanding
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Bill Summary'),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min, // Make dialog size adaptive
+          children: [
+            ...productDetailsWidgets,
+            const SizedBox(height: 16.0),
+            Text(
+              'Total Outstanding: ₹${totalAmount.toStringAsFixed(2)}',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // On pressing "OK" button, show SnackBar and close the dialog
+              Navigator.of(context).pop(); // Close the dialog
+              // Delay showing the SnackBar to ensure dialog has closed
+              Future.delayed(Duration(milliseconds: 100), () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Order Submitted!')),
+                );
+              });
+              setState(() {
+                // Reset product list, you can adjust this to your needs
+                productList = [
+                  {'product': null, 'qty': null, 'scheduleDate': null}
+                ];
+              });
+            },
+            child: const Text('OK'),
+          ),
+          TextButton(
+            onPressed: () {
+              // On pressing "Update", allow user to update more products
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: const Text('Update'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductDropdown({
+    required String label,
+    required List<String> options,
+    ValueChanged<String?>? onChanged,
+  }) {
+    // Ensure the value for 'Product' is not null when it's being used
+    String? dropdownValue = label == 'Product'
+        ? selectedProd1
+        : (label == 'Unload Point' ? selectedUnloadPoint : selectedPlantCode);
+
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         border: const OutlineInputBorder(),
       ),
-      value: label == 'Product' ? selectedProd1 : null,
+      value: dropdownValue,
       items: options
           .map((option) => DropdownMenuItem(value: option, child: Text(option)))
           .toList(),
-      onChanged: onChanged,
+      onChanged: (value) {
+        setState(() {
+          if (label == 'Product') {
+            if (selectedProd1 != null && selectedProd1 != value) {
+              // Check if any products have been added
+              double totalQtyMT = 0;
+              try {
+                totalQtyMT = double.parse(
+                  tableData1.firstWhere((row) =>
+                      row['Description'] == 'Total Order Qnty (MT)')['Lacs']!,
+                );
+              } catch (e) {
+                totalQtyMT = 0; // Default to 0 if there's an error parsing
+              }
+              if (totalQtyMT > 0) {
+                // Show confirmation dialog
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Confirm Change'),
+                    content: const Text(
+                        'All the products you added before will be moved to bin. Do you want to proceed?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            selectedProd1 = value; // Update selected product
+                            productList = [
+                              {
+                                'product': null,
+                                'qty': null,
+                                'scheduleDate': null
+                              }
+                            ]; // Reset product list
+                            _updateCreditLimitTable(); // Reset the credit limit table
+                          });
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                // Directly update if no products were added
+                selectedProd1 = value;
+              }
+            } else {
+              selectedProd1 = value;
+            }
+          } else if (label == 'Unload Point') {
+            selectedUnloadPoint = value;
+            _updatePurchaserAddress(value);
+          } else {
+            selectedPlantCode = value;
+          }
+        });
+      },
     );
   }
+
+  // Widget _buildProductDropdown({
+  //   required String label,
+  //   required List<String> options,
+  //   ValueChanged<String?>? onChanged,
+  // }) {
+  //   // Ensure the value for 'Product' is not null when it's being used
+  //   String? dropdownValue = label == 'Product'
+  //       ? selectedProd1
+  //       : (label == 'Unload Point' ? selectedUnloadPoint : selectedPlantCode);
+
+  //   return DropdownButtonFormField<String>(
+  //     decoration: InputDecoration(
+  //       labelText: label,
+  //       labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  //       border: const OutlineInputBorder(),
+  //     ),
+  //     value: dropdownValue,
+  //     items: options
+  //         .map((option) => DropdownMenuItem(value: option, child: Text(option)))
+  //         .toList(),
+  //     onChanged: (value) {
+  //       if (label == 'Product' &&
+  //           selectedProd1 != null &&
+  //           selectedProd1 != value) {
+  //         // Safely fetch totalQtyMT with proper error handling
+  //         double totalQtyMT = 0;
+  //         try {
+  //           totalQtyMT = double.parse(
+  //             tableData1.firstWhere((row) =>
+  //                 row['Description'] == 'Total Order Qnty (MT)')['Lacs']!,
+  //           );
+  //         } catch (e) {
+  //           totalQtyMT = 0; // Default to 0 if there's an error parsing
+  //         }
+
+  //         if (totalQtyMT > 0) {
+  //           // Show confirmation dialog if products were added
+  //           showDialog(
+  //             context: context,
+  //             builder: (context) => AlertDialog(
+  //               title: const Text('Confirm Change'),
+  //               content: const Text(
+  //                   'All the products you added before will be moved to bin. Do you want to proceed?'),
+  //               actions: [
+  //                 TextButton(
+  //                   onPressed: () {
+  //                     Navigator.of(context).pop(); // Close the dialog
+  //                   },
+  //                   child: const Text('Cancel'),
+  //                 ),
+  //                 TextButton(
+  //                   onPressed: () {
+  //                     setState(() {
+  //                       selectedProd1 = value; // Update selected product
+  //                       productList = [
+  //                         {'product': null, 'qty': null, 'scheduleDate': null}
+  //                       ]; // Reset product list
+  //                       _updateCreditLimitTable(); // Reset the credit limit table
+  //                     });
+  //                     Navigator.of(context).pop(); // Close the dialog
+  //                   },
+  //                   child: const Text('OK'),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         } else {
+  //           // Directly update if no products were added
+  //           setState(() {
+  //             selectedProd1 = value;
+  //           });
+  //         }
+  //       } else if (label == 'Unload Point') {
+  //         selectedUnloadPoint = value;
+  //         _updatePurchaserAddress(value);
+  //       } else if (label == 'Plant Code') {
+  //         setState(() {
+  //           selectedPlantCode = value;
+  //         });
+  //       }
+
+  //       // Call the external onChanged if provided
+  //       if (onChanged != null) {
+  //         onChanged(value);
+  //       }
+  //     },
+  //   );
+  // }
 
   Widget _buildPurchaserDetailCard(bool isSmallScreen) {
     return _buildCard(
