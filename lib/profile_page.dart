@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:login/aadhar_kyc.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
 import 'package:login/content.dart';
+import 'package:login/view_orders.dart';
 import 'package:login/bottom_nav_bar_mobile.dart';
 import 'package:login/QR_scanner.dart';
 
@@ -144,6 +146,8 @@ class ProfilePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       _buildAccountField(
+                          context, 'Manage Orders', Icons.shopping_bag),
+                      _buildAccountField(
                           context, 'Address Details', Icons.location_on),
                       _buildAccountField(
                           context, 'Manage Bank', Icons.account_balance),
@@ -198,9 +202,25 @@ class ProfilePage extends StatelessWidget {
       {Widget? trailing}) {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('$title Clicked')),
-        );
+        if (title == 'Manage Orders') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ManageOrderPage(),
+            ),
+          );
+        } else if (title == 'KYC Details') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AadharCardKYCPage(),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('$title Clicked')),
+          );
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),

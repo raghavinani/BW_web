@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:core';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
+import 'package:login/global_state.dart' as global_state;
 
 class OrderUpdate extends StatefulWidget {
   const OrderUpdate({super.key});
@@ -445,69 +446,75 @@ class _OrderEntryState extends State<OrderUpdate> {
           .map((option) => DropdownMenuItem(value: option, child: Text(option)))
           .toList(),
       onChanged: (value) {
-        setState(() {
-          if (label == 'Product') {
-            if (selectedProd1 != null && selectedProd1 != value) {
-              // Check if any products have been added
-              double totalQtyMT = 0;
-              try {
-                totalQtyMT = double.parse(
-                  tableData1.firstWhere((row) =>
-                      row['Description'] == 'Total Order Qnty (MT)')['Lacs']!,
-                );
-              } catch (e) {
-                totalQtyMT = 0; // Default to 0 if there's an error parsing
-              }
-
-              if (totalQtyMT > 0) {
-                // Show confirmation dialog
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Confirm Change'),
-                    content: const Text(
-                        'All the products you added before will be moved to bin. Do you want to proceed?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            selectedProd1 = value; // Update selected product
-                            productList = [
-                              {
-                                'product': null,
-                                'qty': null,
-                                'scheduleDate': null
-                              }
-                            ]; // Reset product list
-                            _updateCreditLimitTable(); // Reset the credit limit table
-                          });
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                // Directly update if no products were added
-                selectedProd1 = value;
-              }
-            } else {
-              selectedProd1 = value;
+        if (label == 'Product') {
+          if (selectedProd1 != null && selectedProd1 != value) {
+            // Check if any products have been added
+            double totalQtyMT = 0;
+            try {
+              totalQtyMT = double.parse(
+                tableData1.firstWhere((row) =>
+                    row['Description'] == 'Total Order Qnty (MT)')['Lacs']!,
+              );
+            } catch (e) {
+              totalQtyMT = 0; // Default to 0 if there's an error parsing
             }
-          } else if (label == 'Document NO.') {
-            selectedDocuNum = value;
+
+            if (totalQtyMT > 0) {
+              // Show confirmation dialog
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Confirm Change'),
+                  content: const Text(
+                      'All the products you added before will be moved to bin. Do you want to proceed?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          selectedProd1 = value; // Update the product
+                          productList = [
+                            {
+                              'product': null,
+                              'qty': null,
+                              'scheduleDate': null,
+                            }
+                          ]; // Reset product list
+                          _updateCreditLimitTable(); // Reset the credit limit table
+                        });
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              // Directly update if no products were added
+              setState(() {
+                selectedProd1 = value;
+              });
+            }
           } else {
+            setState(() {
+              selectedProd1 = value;
+            });
+          }
+        } else if (label == 'Document NO.') {
+          setState(() {
+            selectedDocuNum = value;
+          });
+        } else {
+          setState(() {
             selectedUnloadPoint = value;
             _updatePurchaserAddress(value);
-          }
-        });
+          });
+        }
       },
     );
   }
@@ -566,6 +573,10 @@ class _OrderEntryState extends State<OrderUpdate> {
             onPressed: () {
               // On pressing "OK" button, show SnackBar and close the dialog
               Navigator.of(context).pop(); // Close the dialog
+
+              // Save the product list to the global state
+              global_state.productList = List.from(productList);
+
               // Delay showing the SnackBar to ensure dialog has closed
               Future.delayed(Duration(milliseconds: 100), () {
                 ScaffoldMessenger.of(context).showSnackBar(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
+import 'package:login/global_state.dart' as global_state;
 
 class OrderEntry extends StatefulWidget {
   const OrderEntry({super.key});
@@ -10,6 +11,7 @@ class OrderEntry extends StatefulWidget {
 }
 
 class _OrderEntryState extends State<OrderEntry> {
+  final _formKey = GlobalKey<FormState>();
   String? selectedProd1;
   String? selectedUnloadPoint;
   String? selectedPlantCode;
@@ -185,10 +187,10 @@ class _OrderEntryState extends State<OrderEntry> {
                                 ),
                                 const SizedBox(width: 8.0),
                                 Expanded(
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
                                       const Text(
                                         'Mode of Transportation',
                                         style: TextStyle(
@@ -220,7 +222,9 @@ class _OrderEntryState extends State<OrderEntry> {
                                           ),
                                         ],
                                       ),
-                                    ])),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ],
@@ -285,6 +289,9 @@ class _OrderEntryState extends State<OrderEntry> {
                                             product['product'] = value;
                                           });
                                         },
+                                        validator: (value) => value == null
+                                            ? 'Please select a product'
+                                            : null,
                                         decoration: InputDecoration(
                                           labelText: 'Product*',
                                           border: OutlineInputBorder(
@@ -311,6 +318,12 @@ class _OrderEntryState extends State<OrderEntry> {
                                             product['qty'] = value;
                                             _updateCreditLimitTable();
                                           });
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Please enter quantity';
+                                          }
+                                          return null;
                                         },
                                       ),
                                     ),
@@ -344,6 +357,10 @@ class _OrderEntryState extends State<OrderEntry> {
                                             });
                                           }
                                         },
+                                        validator: (value) =>
+                                            value == null || value.isEmpty
+                                                ? 'Please select a date'
+                                                : null,
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),
@@ -464,76 +481,82 @@ class _OrderEntryState extends State<OrderEntry> {
 
   // Submit button handler
   void _handleSubmit() {
-    double totalAmount = 0;
-    List<Widget> productDetailsWidgets = [];
+    if (_formKey.currentState!.validate()) {
+      double totalAmount = 0;
+      List<Widget> productDetailsWidgets = [];
 
-    // Calculate the total amount and prepare the product detail widgets
-    for (var product in productList) {
-      if (product['qty'] != null && product['qty'] != '') {
-        double qty = double.parse(product['qty']);
-        double kg = _extractKgFromProduct(product['product']);
-        double price = kg * 1000 * qty; // Price per product
+      // Calculate the total amount and prepare the product detail widgets
+      for (var product in productList) {
+        if (product['qty'] != null && product['qty'] != '') {
+          double qty = double.parse(product['qty']);
+          double kg = _extractKgFromProduct(product['product']);
+          double price = kg * 1000 * qty; // Price per product
 
-        totalAmount += price;
+          totalAmount += price;
 
-        // Add the product details to the list
-        productDetailsWidgets.add(Text(
-          '${product['product']} - ₹${price.toStringAsFixed(2)} (${kg}kg x $qty)',
-          style: const TextStyle(fontSize: 16),
-        ));
+          // Add the product details to the list
+          productDetailsWidgets.add(Text(
+            '${product['product']} - ₹${price.toStringAsFixed(2)} (${kg}kg x $qty)',
+            style: const TextStyle(fontSize: 16),
+          ));
+        }
       }
-    }
 
-    // Show the confirmation dialog with product details and total outstanding
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Bill Summary'),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min, // Make dialog size adaptive
-          children: [
-            ...productDetailsWidgets,
-            const SizedBox(height: 16.0),
-            Text(
-              'Total Outstanding: ₹${totalAmount.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18.0,
+      // Show the confirmation dialog with product details and total outstanding
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Bill Summary'),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min, // Make dialog size adaptive
+            children: [
+              ...productDetailsWidgets,
+              const SizedBox(height: 16.0),
+              Text(
+                'Total Outstanding: ₹${totalAmount.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0,
+                ),
               ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              // On pressing "OK" button, show SnackBar and close the dialog
-              Navigator.of(context).pop(); // Close the dialog
-              // Delay showing the SnackBar to ensure dialog has closed
-              Future.delayed(Duration(milliseconds: 100), () {
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // On pressing "OK" button, show SnackBar and close the dialog
+                Navigator.of(context).pop(); // Close the dialog
+
+                // Save the product list to the global state
+                global_state.productList.addAll(productList);
+
+                //showing the SnackBar to ensure dialog has closed
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Order Submitted!')),
                 );
-              });
-              setState(() {
-                // Reset product list, you can adjust this to your needs
-                productList = [
-                  {'product': null, 'qty': null, 'scheduleDate': null}
-                ];
-              });
-            },
-            child: const Text('OK'),
-          ),
-          TextButton(
-            onPressed: () {
-              // On pressing "Update", allow user to update more products
-              Navigator.of(context).pop(); // Close the dialog
-            },
-            child: const Text('Update'),
-          ),
-        ],
-      ),
-    );
+
+                setState(() {
+                  // Reset product list, you can adjust this to your needs
+                  productList = [
+                    {'product': null, 'qty': null, 'scheduleDate': null}
+                  ];
+                });
+              },
+              child: const Text('OK'),
+            ),
+            TextButton(
+              onPressed: () {
+                // On pressing "Update", allow user to update more products
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Update'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   Widget _buildProductDropdown({
@@ -607,110 +630,29 @@ class _OrderEntryState extends State<OrderEntry> {
                 );
               } else {
                 // Directly update if no products were added
-                selectedProd1 = value;
+                setState(() {
+                  selectedProd1 = value;
+                });
               }
             } else {
-              selectedProd1 = value;
+              setState(() {
+                selectedProd1 = value;
+              });
             }
           } else if (label == 'Unload Point') {
-            selectedUnloadPoint = value;
-            _updatePurchaserAddress(value);
+            setState(() {
+              selectedUnloadPoint = value;
+              _updatePurchaserAddress(value);
+            });
           } else {
-            selectedPlantCode = value;
+            setState(() {
+              selectedPlantCode = value;
+            });
           }
         });
       },
     );
   }
-
-  // Widget _buildProductDropdown({
-  //   required String label,
-  //   required List<String> options,
-  //   ValueChanged<String?>? onChanged,
-  // }) {
-  //   // Ensure the value for 'Product' is not null when it's being used
-  //   String? dropdownValue = label == 'Product'
-  //       ? selectedProd1
-  //       : (label == 'Unload Point' ? selectedUnloadPoint : selectedPlantCode);
-
-  //   return DropdownButtonFormField<String>(
-  //     decoration: InputDecoration(
-  //       labelText: label,
-  //       labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-  //       border: const OutlineInputBorder(),
-  //     ),
-  //     value: dropdownValue,
-  //     items: options
-  //         .map((option) => DropdownMenuItem(value: option, child: Text(option)))
-  //         .toList(),
-  //     onChanged: (value) {
-  //       if (label == 'Product' &&
-  //           selectedProd1 != null &&
-  //           selectedProd1 != value) {
-  //         // Safely fetch totalQtyMT with proper error handling
-  //         double totalQtyMT = 0;
-  //         try {
-  //           totalQtyMT = double.parse(
-  //             tableData1.firstWhere((row) =>
-  //                 row['Description'] == 'Total Order Qnty (MT)')['Lacs']!,
-  //           );
-  //         } catch (e) {
-  //           totalQtyMT = 0; // Default to 0 if there's an error parsing
-  //         }
-
-  //         if (totalQtyMT > 0) {
-  //           // Show confirmation dialog if products were added
-  //           showDialog(
-  //             context: context,
-  //             builder: (context) => AlertDialog(
-  //               title: const Text('Confirm Change'),
-  //               content: const Text(
-  //                   'All the products you added before will be moved to bin. Do you want to proceed?'),
-  //               actions: [
-  //                 TextButton(
-  //                   onPressed: () {
-  //                     Navigator.of(context).pop(); // Close the dialog
-  //                   },
-  //                   child: const Text('Cancel'),
-  //                 ),
-  //                 TextButton(
-  //                   onPressed: () {
-  //                     setState(() {
-  //                       selectedProd1 = value; // Update selected product
-  //                       productList = [
-  //                         {'product': null, 'qty': null, 'scheduleDate': null}
-  //                       ]; // Reset product list
-  //                       _updateCreditLimitTable(); // Reset the credit limit table
-  //                     });
-  //                     Navigator.of(context).pop(); // Close the dialog
-  //                   },
-  //                   child: const Text('OK'),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         } else {
-  //           // Directly update if no products were added
-  //           setState(() {
-  //             selectedProd1 = value;
-  //           });
-  //         }
-  //       } else if (label == 'Unload Point') {
-  //         selectedUnloadPoint = value;
-  //         _updatePurchaserAddress(value);
-  //       } else if (label == 'Plant Code') {
-  //         setState(() {
-  //           selectedPlantCode = value;
-  //         });
-  //       }
-
-  //       // Call the external onChanged if provided
-  //       if (onChanged != null) {
-  //         onChanged(value);
-  //       }
-  //     },
-  //   );
-  // }
 
   Widget _buildPurchaserDetailCard(bool isSmallScreen) {
     return _buildCard(

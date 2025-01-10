@@ -41,6 +41,7 @@ dependencies:
   file_picker: ^8.1.6
   mobile_scanner: ^6.0.2
   carousel_slider: ^5.0.0
+  http: ^1.2.2
 
 
 

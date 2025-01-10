@@ -14,13 +14,13 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        height: 80.0, // Increase height for more space
+        height: 100.0, // Increase height for more space
         margin: const EdgeInsets.only(
-            bottom: 20.0,
+            bottom: 10.0,
             left: 10.0,
             right: 10.0), // Add bottom margin to give the "hanging" effect
         decoration: BoxDecoration(
-          color: Colors.grey[200],
+          color: Colors.lightGreen.shade200,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(35.0),
             topRight: Radius.circular(35.0),
@@ -58,6 +58,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
           selectedItemColor: Colors.purple,
           backgroundColor: Colors
               .transparent, // Transparent background for the bottom bar itself
+          selectedLabelStyle:
+              TextStyle(fontWeight: FontWeight.bold), // Bold text for selected
+          unselectedLabelStyle: TextStyle(
+              fontWeight: FontWeight.w500), // Semi-bold text for unselected
           onTap: onItemTapped,
         ),
       ),
