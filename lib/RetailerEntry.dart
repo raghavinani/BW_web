@@ -124,6 +124,8 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
       endDrawer: const CustomSidebar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
+          final isWideScreen = MediaQuery.of(context).size.width > 1080;
+
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -141,7 +143,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
                       ),
                     ),
                     const SizedBox(height: 16.0),
-                    constraints.maxWidth > 800
+                    isWideScreen
                         ? Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
