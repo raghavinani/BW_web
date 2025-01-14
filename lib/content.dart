@@ -109,71 +109,93 @@ class HomeBase extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final isSmallScreen = screenWidth < AppConfig.smallScreenBreakpoint;
 
+    int _selectedIndex = 0;
+
+    void _onItemTapped(int index) {
+      if (index == 0) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ContentPage()),
+        );
+      } else if (index == 1) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const QrCodeScanner()),
+        );
+      } else if (index == 2) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilePage()),
+        );
+      }
+    }
+
     return Scaffold(
+      extendBody: true,
       appBar: const CustomAppBar(),
       endDrawer: const CustomSidebar(),
-      body: Container(
-        color: Colors.blue.shade600,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 16.0, horizontal: AppConfig.boxPadding),
-                      child: const CustomCarousel(),
+      body: Stack(
+        children: [
+          // Main content
+          Container(
+            color: Colors.grey.shade300,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: AppConfig.boxPadding),
+                          child: const CustomCarousel(),
+                        ),
+                        _buildHorizontalQuickMenu(),
+                        Padding(
+                          padding: const EdgeInsets.all(AppConfig.boxPadding),
+                          child: _buildBoxesLayout(isMobile, isSmallScreen,
+                              screenWidth, screenHeight),
+                        ),
+                      ],
                     ),
-                    _buildHorizontalQuickMenu(),
-                    Padding(
-                      padding: const EdgeInsets.all(AppConfig.boxPadding),
-                      child: _buildBoxesLayout(
-                          isMobile, isSmallScreen, screenWidth, screenHeight),
-                    ),
-                  ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Floating Bottom Navigation Bar
+          if (isMobile)
+            Positioned(
+              left: 20.0,
+              right: 20.0,
+              bottom: 10.0,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30.0),
+                child: Container(
+                  color:
+                      Colors.transparent, // Ensure no background blocks content
+                  child: CustomBottomNavigationBar(
+                    currentIndex: _selectedIndex,
+                    onItemTapped: (index) {
+                      _selectedIndex = index;
+                      _onItemTapped(index);
+                    },
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
-      bottomNavigationBar: isMobile
-          ? CustomBottomNavigationBar(
-              currentIndex: 0,
-              onItemTapped: (index) {
-                if (index == 0) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ContentPage()),
-                  );
-                } else if (index == 1) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const QrCodeScanner()),
-                  );
-                } else if (index == 2) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ProfilePage()),
-                  );
-                }
-              },
-            )
-          : null,
     );
   }
 
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.all(AppConfig.boxPadding),
-      color: AppConfig.boxBackgroundColor,
+      color: Colors.blue.shade50,
       child: const Center(
         child: Text(
           'Birla White',
@@ -313,7 +335,7 @@ class HomeBase extends StatelessWidget {
                     width: 100,
                     margin: const EdgeInsets.symmetric(horizontal: 8.0),
                     decoration: BoxDecoration(
-                      color: Colors.yellow.shade100,
+                      color: Colors.teal.shade100,
                       borderRadius: BorderRadius.circular(8.0),
                       boxShadow: [
                         BoxShadow(

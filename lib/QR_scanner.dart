@@ -59,74 +59,91 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Scaffold(
+      extendBody: true,
       appBar: const CustomAppBar(),
       endDrawer: const CustomSidebar(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Token Scan',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
-              ),
-            ),
-            const SizedBox(height: 24),
-            TextField(
-              controller: _tokenController,
-              decoration: const InputDecoration(
-                labelText: 'Token Number',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 40),
-            Center(
-              child: SizedBox(
-                width: 200,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[900], // Dark blue shade
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+      body: Stack(
+        children: [
+          // Main content
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  'Token Scan',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueAccent,
                   ),
-                  onPressed: () async {
-                    final scannedValue = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => QrCodeScannerPage(),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: _tokenController,
+                  decoration: const InputDecoration(
+                    labelText: 'Token Number',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                Center(
+                  child: SizedBox(
+                    width: 200,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[900], // Dark blue shade
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
-                    );
+                      onPressed: () async {
+                        final scannedValue = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => QrCodeScannerPage(),
+                          ),
+                        );
 
-                    if (scannedValue != null) {
-                      setState(() {
-                        _tokenController.text = scannedValue;
-                      });
-                    }
-                  },
-                  child: const Text(
-                    'Scan Token',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                        if (scannedValue != null) {
+                          setState(() {
+                            _tokenController.text = scannedValue;
+                          });
+                        }
+                      },
+                      child: const Text(
+                        'Scan Token',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Floating Bottom Navigation Bar
+          if (isMobile)
+            Positioned(
+              left: 20.0,
+              right: 20.0,
+              bottom: 10.0,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30.0),
+                child: Container(
+                  color:
+                      Colors.transparent, // Ensure no background blocks content
+                  child: CustomBottomNavigationBar(
+                    currentIndex: _selectedIndex,
+                    onItemTapped: (index) {
+                      _onItemTapped(index);
+                    },
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
-      bottomNavigationBar: isMobile
-          ? CustomBottomNavigationBar(
-              currentIndex: _selectedIndex,
-              onItemTapped: (index) {
-                _selectedIndex = index;
-                _onItemTapped(index);
-              },
-            )
-          : null,
     );
   }
 }
