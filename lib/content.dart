@@ -8,6 +8,7 @@ import 'package:login/profile_page.dart';
 import 'package:login/bottom_nav_bar_mobile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:login/view_orders.dart';
+import 'package:flutter/animation.dart';
 
 void main() {
   runApp(const ContentPage());
@@ -153,6 +154,11 @@ class HomeBase extends StatelessWidget {
                               vertical: 16.0, horizontal: AppConfig.boxPadding),
                           child: const CustomCarousel(),
                         ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: AppConfig.boxPadding),
+                          child: PointsWidget(),
+                        ), // Add the PointsWidget here
                         _buildHorizontalQuickMenu(),
                         Padding(
                           padding: const EdgeInsets.all(AppConfig.boxPadding),
@@ -312,7 +318,6 @@ class HomeBase extends StatelessWidget {
   Widget _buildHorizontalQuickMenu() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-      // color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -331,35 +336,40 @@ class HomeBase extends StatelessWidget {
                 final item = quickMenuItems[index];
                 return GestureDetector(
                   onTap: () => _handleQuickMenuItemTap(context, item['label']),
-                  child: Container(
-                    width: 100,
-                    margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.teal.shade100,
-                      borderRadius: BorderRadius.circular(8.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 4.0,
-                          spreadRadius: 2.0,
-                          offset: const Offset(2, 2),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 70,
+                        height: 70,
+                        margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4.0,
+                              spreadRadius: 2.0,
+                              offset: const Offset(2, 2),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(item['icon'] as IconData,
-                            size: 36, color: Colors.black),
-                        const SizedBox(height: 8),
-                        Text(
-                          item['label'] as String,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.black),
+                        child: Icon(
+                          item['icon'] as IconData,
+                          size: 36,
+                          color: Colors.black,
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        item['label'].replaceAll(' ', '\n') as String,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },
@@ -404,3 +414,157 @@ final List<Map<String, dynamic>> _quickMenuItems = [
   {'icon': Icons.local_shipping, 'label': 'Delivery Status'},
   {'icon': Icons.feedback, 'label': 'Feedback'},
 ];
+
+class PointsWidget extends StatefulWidget {
+  const PointsWidget({super.key});
+
+  @override
+  _PointsWidgetState createState() => _PointsWidgetState();
+}
+
+class _PointsWidgetState extends State<PointsWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<int> _animation;
+
+  @override
+  void initState() {
+    final coins = 1354356;
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+
+    _animation = IntTween(begin: 0, end: coins).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF003366), // Dark Blue
+            Color(0xFF0073e6), // Light Blue
+            Color(0xFF003366), // Dark Blue
+          ],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 4.0,
+            spreadRadius: 1.0,
+            offset: const Offset(2, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Left Coin Image without circular shape
+          Container(
+            height: 50, // Adjust size to fill container
+            width: 120, // Adjust size to fill container
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: const Center(
+              child: Image(
+                image: AssetImage('assets/coin1.jpeg'),
+                fit: BoxFit.cover, // Cover to fill the container
+                height: 70,
+                width: 120,
+              ),
+            ),
+          ),
+          // Points Text with Dollar sign
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    'MY POINTS',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(
+                      width: 8.0), // Space between text and dollar sign
+                  Container(
+                    height: 30,
+                    width: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '\$', // Dollar sign inside circle
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4.0),
+              AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  return Text(
+                    _animation.value.toString(),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          // Right Coin Image without circular shape
+          Container(
+            height: 75, // Adjust size to fill container
+            width: 110, // Adjust size to fill container
+            decoration: BoxDecoration(
+              color: Colors.transparent, // Transparent background
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: const Center(
+              child: Image(
+                image: AssetImage('assets/coins.jpeg'),
+                fit: BoxFit.cover, // Cover to fill the container
+                height: 75,
+                width: 110,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
