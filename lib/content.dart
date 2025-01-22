@@ -8,7 +8,6 @@ import 'package:login/profile_page.dart';
 import 'package:login/bottom_nav_bar_mobile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:login/view_orders.dart';
-import 'package:flutter/animation.dart';
 
 void main() {
   runApp(const ContentPage());
@@ -487,7 +486,7 @@ class _PointsWidgetState extends State<PointsWidget>
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: const Center(
               child: Image(
-                image: AssetImage('assets/coin1.jpeg'),
+                image: AssetImage('assets/coin1.png'),
                 fit: BoxFit.cover, // Cover to fill the container
                 height: 70,
                 width: 120,
@@ -514,7 +513,7 @@ class _PointsWidgetState extends State<PointsWidget>
                     height: 30,
                     width: 30,
                     decoration: BoxDecoration(
-                      color: Colors.transparent,
+                      color: Colors.black26,
                       shape: BoxShape.circle,
                     ),
                     child: const Center(
@@ -556,7 +555,7 @@ class _PointsWidgetState extends State<PointsWidget>
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: const Center(
               child: Image(
-                image: AssetImage('assets/coins.jpeg'),
+                image: AssetImage('assets/coin2.png'),
                 fit: BoxFit.cover, // Cover to fill the container
                 height: 75,
                 width: 110,
