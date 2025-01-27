@@ -15,80 +15,101 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return AppBar(
-      backgroundColor: Colors.blueAccent,
       flexibleSpace: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue, Colors.purple],
+            colors: [
+              Colors.blue[800]!, // Dark Blue
+              Colors.blueAccent, // Light Blue / BlueAccent
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
         ),
       ),
-      leading: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ContentPage()),
-            );
-          },
-          child: Image.asset(
-            'assets/logo.jpeg',
-            fit: BoxFit.fitWidth,
-            width: 500,
-            height: kToolbarHeight,
+      toolbarHeight: 100,
+      automaticallyImplyLeading: false,
+      title: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ContentPage()),
+                );
+              },
+              child: Image.asset(
+                'assets/logo.jpeg',
+                height: 80,
+                width: 150, // Adjust to make the logo larger
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-        ),
+          if (screenWidth > 1080)
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment:
+                    CrossAxisAlignment.center, // Center the dropdowns
+                children: [
+                  _buildDropdownMenu(context, 'Transactions', transactionLinks),
+                  _buildDropdownMenu(context, 'Reports', reportLinks),
+                  _buildDropdownMenu(context, 'Masters', masterLinks),
+                  _buildDropdownMenu(context, 'Miscellaneous', miscLinks),
+                ],
+              ),
+            ),
+        ],
       ),
-      title: screenWidth > 800
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildDropdownMenu(context, 'Transactions', transactionLinks),
-                _buildDropdownMenu(context, 'Reports', reportLinks),
-                _buildDropdownMenu(context, 'Masters', masterLinks),
-                _buildDropdownMenu(context, 'Miscellaneous', miscLinks),
-              ],
-            )
-          : null,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.search, color: Colors.white),
-          onPressed: () {},
-        ),
-        IconButton(
-          icon: const Icon(Icons.list, color: Colors.white),
-          onPressed: () {
-            Scaffold.of(context).openEndDrawer(); // Open right sidebar
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.notifications, color: Colors.white),
-          onPressed: () {},
-        ),
-        IconButton(
-          icon: const CircleAvatar(
-            backgroundColor: Colors.white,
-            child: Icon(Icons.person, color: Colors.blue),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: IconButton(
+            iconSize: 42,
+            icon: const Icon(Icons.list, color: Colors.white),
+            onPressed: () {
+              Scaffold.of(context).openDrawer(); // Open right sidebar
+            },
           ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProfilePage()),
-            );
-          },
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: IconButton(
+            iconSize: 42,
+            icon: const Icon(Icons.notifications, color: Colors.white),
+            onPressed: () {},
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0, left: 8.0),
+          child: IconButton(
+            iconSize: 60,
+            icon: const CircleAvatar(
+              radius: 40,
+              backgroundImage: AssetImage('assets/profile_image.png'),
+            ),
+            onPressed: () {
+              final isMobile =
+                  Theme.of(context).platform == TargetPlatform.iOS ||
+                      Theme.of(context).platform == TargetPlatform.android;
+
+              if (isMobile) {
+                Scaffold.of(context).openEndDrawer();
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
+                );
+              }
+            },
+          ),
         ),
       ],
     );
   }
-
-  // void _openSidebar(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: true,
-  //     builder: (context) => const CustomSidebar(),
-  //   );
-  // }
 
   Widget _buildDropdownMenu(
     BuildContext context,
@@ -98,7 +119,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return PopupMenuButton<String>(
       tooltip: title,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0), // Add spacing
         child: Text(
           title,
           style: const TextStyle(color: Colors.white, fontSize: 16),
@@ -144,7 +165,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   Widget _buildSubMenu(BuildContext context, Map<String, dynamic> link) {
     return PopupMenuButton<String>(
-      offset: const Offset(150, 0), // Adjust the dropdown position to the right
+      offset: const Offset(200, 0), // Adjust the dropdown position to the right
       child: Padding(
         padding: const EdgeInsets.only(
             left: 30.0), // Shift submenu items slightly right
@@ -158,9 +179,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  right:
-                      30.0), // Adjust the arrow position slightly to the left
+              padding: const EdgeInsets.only(right: 30.0),
               child: const Icon(Icons.arrow_right, size: 16),
             ),
           ],
@@ -203,5 +222,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(70);
+  Size get preferredSize => const Size.fromHeight(100);
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/RetailerEntry.dart';
+import 'package:login/custom_app_bar/profile_sidebar.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
 import 'package:login/carousel.dart';
@@ -133,7 +134,10 @@ class HomeBase extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       appBar: const CustomAppBar(),
-      endDrawer: const CustomSidebar(),
+      drawer: const CustomSidebar(),
+      endDrawer: const ProfileSidebar(
+        mainPage: const ContentPage(),
+      ),
       body: Stack(
         children: [
           // Main content
@@ -323,11 +327,11 @@ class HomeBase extends StatelessWidget {
           const Text(
             'Quick Menu',
             style: TextStyle(
-                fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black),
           ),
           const SizedBox(height: 16),
           SizedBox(
-            height: 120,
+            height: 156,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: quickMenuItems.length,
@@ -338,8 +342,8 @@ class HomeBase extends StatelessWidget {
                   child: Column(
                     children: [
                       Container(
-                        width: 70,
-                        height: 70,
+                        width: 100,
+                        height: 100,
                         margin: const EdgeInsets.symmetric(horizontal: 8.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -355,7 +359,7 @@ class HomeBase extends StatelessWidget {
                         ),
                         child: Icon(
                           item['icon'] as IconData,
-                          size: 36,
+                          size: 42,
                           color: Colors.black,
                         ),
                       ),
@@ -364,7 +368,7 @@ class HomeBase extends StatelessWidget {
                         item['label'].replaceAll(' ', '\n') as String,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 16,
                           color: Colors.black,
                         ),
                       ),

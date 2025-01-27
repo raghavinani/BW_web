@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/aadhar_kyc.dart';
+import 'package:login/custom_app_bar/profile_sidebar.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
 import 'package:login/content.dart';
@@ -39,7 +40,8 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       appBar: const CustomAppBar(),
-      endDrawer: const CustomSidebar(),
+      drawer: const CustomSidebar(),
+      endDrawer: ProfileSidebar(mainPage: ProfilePage()),
       body: Stack(
         children: [
           // Main content
