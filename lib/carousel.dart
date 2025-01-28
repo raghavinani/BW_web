@@ -9,8 +9,6 @@ class CustomCarousel extends StatefulWidget {
 }
 
 class _CustomCarouselState extends State<CustomCarousel> {
-  static const double smallScreenBreakpoint = 800.0;
-
   final List<String> imagePaths = List.generate(
     6,
     (index) => 'assets/carousel/index_$index.jpg',
@@ -21,9 +19,7 @@ class _CustomCarouselState extends State<CustomCarousel> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final carouselHeight = screenHeight < smallScreenBreakpoint
-        ? screenHeight / 3
-        : (2 * screenHeight) / 5;
+    final carouselHeight = (screenHeight) / 3;
 
     return Column(
       children: [

@@ -3,45 +3,18 @@ import 'package:login/aadhar_kyc.dart';
 import 'package:login/custom_app_bar/profile_sidebar.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
-import 'package:login/content.dart';
 import 'package:login/view_orders.dart';
-import 'package:login/bottom_nav_bar_mobile.dart';
-import 'package:login/QR_scanner.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = Theme.of(context).platform == TargetPlatform.iOS ||
-        Theme.of(context).platform == TargetPlatform.android;
-
-    int _selectedIndex = 2;
-
-    void _onItemTapped(int index) {
-      if (index == 0) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ContentPage()),
-        );
-      } else if (index == 1) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const QrCodeScanner()),
-        );
-      } else if (index == 2) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ProfilePage()),
-        );
-      }
-    }
-
     return Scaffold(
       extendBody: true,
-      appBar: const CustomAppBar(),
-      drawer: const CustomSidebar(),
-      endDrawer: ProfileSidebar(mainPage: ProfilePage()),
+      appBar: CustomAppBar(),
+      drawer: CustomSidebar(),
+      endDrawer: const ProfileSidebar(),
       body: Stack(
         children: [
           // Main content
@@ -202,26 +175,6 @@ class ProfilePage extends StatelessWidget {
               ],
             ),
           ),
-          // Floating Bottom Navigation Bar
-          if (isMobile)
-            Positioned(
-              left: 20.0,
-              right: 20.0,
-              bottom: 10.0,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(30.0),
-                child: Container(
-                  color:
-                      Colors.transparent, // Ensure no background blocks content
-                  child: CustomBottomNavigationBar(
-                    currentIndex: _selectedIndex,
-                    onItemTapped: (index) {
-                      _onItemTapped(index);
-                    },
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );

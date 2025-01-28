@@ -8,7 +8,14 @@ import 'package:login/content.dart';
 import 'package:login/order_update.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key});
+  // final VoidCallback onOpenFirstEndDrawer;
+  // final VoidCallback onOpenSecondEndDrawer;
+
+  const CustomAppBar({
+    super.key,
+    // required this.onOpenFirstEndDrawer,
+    // required this.onOpenSecondEndDrawer,
+  });
 
   @override
   Widget build(BuildContext context) {

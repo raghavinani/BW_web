@@ -17,8 +17,8 @@ class CustomSidebar extends StatelessWidget {
         Positioned(
           top: MediaQuery.of(context).size.height * 0.01, // Offset from the top
           bottom: MediaQuery.of(context).size.height *
-              0.01, // Offset from the bottom
-          left: 0, // Align to the left
+              0.055, // Offset from the bottom
+          left: 0, // Align to the right
           child: SizedBox(
             width: screenWidth * 0.4, // Set width to 40% of the screen width
             child: Drawer(
@@ -26,10 +26,10 @@ class CustomSidebar extends StatelessWidget {
                 decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 76, 188, 244),
                   borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(50), // Rounded top-right corner
-                    bottomRight:
-                        Radius.circular(50), // Rounded bottom-right corner
-                  ),
+                      // topLeft: Radius.circular(50),
+                      // bottomLeft: Radius.circular(50),
+                      topRight: Radius.circular(50),
+                      bottomRight: Radius.circular(50)),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: ListView(
@@ -86,7 +86,7 @@ class CustomSidebar extends StatelessWidget {
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 16 * 1.5, // Font size increased 1.5x
+              fontSize: 16 * 2, // Font size increased 1.5x
             ),
           ),
         ),
@@ -102,7 +102,7 @@ class CustomSidebar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
           vertical: 8.0), // Space between submenu items
       child: PopupMenuButton<String>(
-        offset: const Offset(150, 0), // Adjust dropdown position
+        offset: const Offset(280, 0), // Adjust dropdown position
         child: Padding(
           padding: const EdgeInsets.only(
               left: 30.0), // Shift submenu items slightly right
@@ -113,7 +113,7 @@ class CustomSidebar extends StatelessWidget {
                 link['title'],
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14 * 1.5, // Font size increased 1.5x
+                  fontSize: 14 * 2, // Font size increased 1.5x
                 ),
               ),
               const Padding(
@@ -159,7 +159,10 @@ class CustomSidebar extends StatelessWidget {
                       vertical: 4.0), // Padding between sublinks
                   child: Text(
                     '• $subLink',
-                    style: const TextStyle(fontSize: 14.0),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w300,
+                        fontSize: 18.0,
+                        color: Color.fromARGB(255, 2, 27, 48)),
                   ),
                 ),
               ),

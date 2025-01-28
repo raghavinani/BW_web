@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login/custom_app_bar/profile_sidebar.dart';
 import 'dart:core';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
@@ -104,8 +105,9 @@ class _OrderEntryState extends State<OrderUpdate> {
     final isSmallScreen = MediaQuery.of(context).size.width < 800;
 
     return Scaffold(
-      appBar: const CustomAppBar(),
-      endDrawer: const CustomSidebar(),
+      appBar: CustomAppBar(),
+      drawer: CustomSidebar(),
+      endDrawer: const ProfileSidebar(),
       body: Container(
         color: Colors.blue.shade600,
         child: Column(

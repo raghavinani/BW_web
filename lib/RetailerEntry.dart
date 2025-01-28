@@ -3,6 +3,7 @@ import 'dart:typed_data'; // For web file handling
 import 'package:flutter/foundation.dart'; // To check platform
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:login/custom_app_bar/profile_sidebar.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
 
@@ -120,8 +121,9 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
-      endDrawer: const CustomSidebar(),
+      appBar: CustomAppBar(),
+      drawer: CustomSidebar(),
+      endDrawer: const ProfileSidebar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isWideScreen = MediaQuery.of(context).size.width > 1080;
