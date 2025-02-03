@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
 
-class SearchBar extends StatelessWidget {
-  const SearchBar({super.key});
+class SearchBarWidget extends StatelessWidget {
+  final VoidCallback onClose;
+
+  const SearchBarWidget({super.key, required this.onClose});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.transparent, // Border color
-        borderRadius: BorderRadius.circular(30.0), // Rounded corners
-      ),
+      height: 80, // Reduce height to prevent overflow
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 2),
       child: TextField(
+        textAlign: TextAlign.start,
+        style: const TextStyle(fontSize: 14, color: Colors.black),
         decoration: InputDecoration(
-          hintText: 'Search...',
+          prefixIcon: const Icon(Icons.search, size: 20, color: Colors.blue),
           filled: true,
-          fillColor: Colors.white, // Search bar background color
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(
-                30.0), // Rounded corners for the text field
-            borderSide: BorderSide.none,
+          fillColor: Colors.white,
+          hintText: 'Search for reports, orders, etc.',
+          hintStyle: TextStyle(color: Colors.black.withOpacity(.40)),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
           ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-          prefixIcon: Icon(Icons.search, color: Colors.blue), // Search icon
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.close, color: Colors.blue),
+            onPressed: onClose,
+          ),
         ),
       ),
     );

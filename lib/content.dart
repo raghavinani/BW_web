@@ -7,7 +7,6 @@ import 'package:login/carousel.dart';
 import 'package:login/bottom_nav_bar_mobile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:login/view_orders.dart';
-import 'package:login/search.dart' as search;
 
 void main() {
   runApp(const ContentPage());
@@ -128,7 +127,6 @@ class HomeBase extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const search.SearchBar(),
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 16.0, horizontal: AppConfig.boxPadding),
@@ -302,7 +300,7 @@ class HomeBase extends StatelessWidget {
   Widget _buildHorizontalQuickMenu() {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -311,55 +309,53 @@ class HomeBase extends StatelessWidget {
             style: TextStyle(
                 fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 4),
           SizedBox(
-            height: 156,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: quickMenuItems.length,
-              itemBuilder: (context, index) {
-                final item = quickMenuItems[index];
-                return GestureDetector(
-                  onTap: () => _handleQuickMenuItemTap(context, item['label']),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.shade50,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 4.0,
-                              spreadRadius: 2.0,
-                              offset: const Offset(2, 2),
+            height: 180,
+            child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4, // Set to 4 items per row
+                  childAspectRatio: 1.5, // Make items square
+                ),
+                itemCount: quickMenuItems.length,
+                itemBuilder: (context, index) {
+                  final item = quickMenuItems[index];
+                  return GestureDetector(
+                      onTap: () =>
+                          _handleQuickMenuItemTap(context, item['label']),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 0),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.rectangle,
+                        ),
+                        child: Column(
+                          mainAxisAlignment:
+                              MainAxisAlignment.center, // Center the icon
+                          children: [
+                            Icon(
+                              item['icon']
+                                  as IconData, // Assuming 'icon' is part of the item map
+                              size: 45,
+                              color: Colors.black,
+                            ),
+                            const SizedBox(
+                                height: 4), // Space between icon and label
+                            Text(
+                              item['label'].replaceAll(' ',
+                                  '\n'), // Replace spaces with newlines for better formatting
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.black,
+                              ),
                             ),
                           ],
                         ),
-                        child: Icon(
-                          item['icon'] as IconData,
-                          size: 42,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        item['label'].replaceAll(' ', '\n') as String,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
+                      ));
+                }),
+          )
         ],
       ),
     );

@@ -4,9 +4,29 @@ import 'package:login/RetailerEntry.dart';
 import 'package:login/QR_scanner.dart';
 import 'package:login/order_update.dart';
 import 'package:login/order_entry.dart';
+import 'sidebar_state.dart';
 
-class CustomSidebar extends StatelessWidget {
+class CustomSidebar extends StatefulWidget {
   const CustomSidebar({super.key});
+
+  @override
+  _CustomSidebarState createState() => _CustomSidebarState();
+}
+
+class _CustomSidebarState extends State<CustomSidebar> {
+  @override
+  void initState() {
+    super.initState();
+    sidebarState.addListener(() {
+      setState(() {}); // Rebuild when sidebar state changes
+    });
+  }
+
+  @override
+  void dispose() {
+    sidebarState.removeListener(() {});
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

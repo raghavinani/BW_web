@@ -1,119 +1,156 @@
 import 'package:flutter/material.dart';
 import 'package:login/QR_scanner.dart';
 import 'package:login/order_entry.dart';
-import 'app_links.dart';
 import 'package:login/profile_page.dart';
 import 'package:login/RetailerEntry.dart';
 import 'package:login/content.dart';
 import 'package:login/order_update.dart';
+import 'package:login/search.dart';
+import 'app_links.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  // final VoidCallback onOpenFirstEndDrawer;
-  // final VoidCallback onOpenSecondEndDrawer;
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
+  const CustomAppBar({super.key});
 
-  const CustomAppBar({
-    super.key,
-    // required this.onOpenFirstEndDrawer,
-    // required this.onOpenSecondEndDrawer,
-  });
+  @override
+  _CustomAppBarState createState() => _CustomAppBarState();
+
+  @override
+  Size get preferredSize =>
+      const Size.fromHeight(160); // Adjust height dynamically
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  bool isSearchActive = false;
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return AppBar(
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.blue[800]!, // Dark Blue
-              Colors.blueAccent, // Light Blue / BlueAccent
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-      ),
-      toolbarHeight: 100,
-      automaticallyImplyLeading: false,
-      title: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ContentPage()),
-                );
-              },
-              child: Image.asset(
-                'assets/logo.jpeg',
-                height: 80,
-                width: 150, // Adjust to make the logo larger
-                fit: BoxFit.cover,
-              ),
+    return Stack(
+      children: [
+        Container(
+          height: isSearchActive ? 240 : 130, // Ensure AppBar adjusts height
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.blue[800]!,
+                Colors.blueAccent,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
-          if (screenWidth > 1080)
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment:
-                    CrossAxisAlignment.center, // Center the dropdowns
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              toolbarHeight: 100,
+              automaticallyImplyLeading: false,
+              title: Row(
                 children: [
-                  _buildDropdownMenu(context, 'Transactions', transactionLinks),
-                  _buildDropdownMenu(context, 'Reports', reportLinks),
-                  _buildDropdownMenu(context, 'Masters', masterLinks),
-                  _buildDropdownMenu(context, 'Miscellaneous', miscLinks),
+                  IconButton(
+                    iconSize: 42,
+                    icon: const Icon(Icons.list, color: Colors.white),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ContentPage()),
+                        );
+                      },
+                      child: Image.asset(
+                        'assets/logo.jpeg',
+                        height: 60,
+                        width: 120,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  if (screenWidth > 1080)
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildDropdownMenu(
+                              context, 'Transactions', transactionLinks),
+                          _buildDropdownMenu(context, 'Reports', reportLinks),
+                          _buildDropdownMenu(context, 'Masters', masterLinks),
+                          _buildDropdownMenu(
+                              context, 'Miscellaneous', miscLinks),
+                        ],
+                      ),
+                    ),
                 ],
               ),
-            ),
-        ],
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: IconButton(
-            iconSize: 42,
-            icon: const Icon(Icons.list, color: Colors.white),
-            onPressed: () {
-              Scaffold.of(context).openDrawer(); // Open right sidebar
-            },
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: IconButton(
-            iconSize: 42,
-            icon: const Icon(Icons.notifications, color: Colors.white),
-            onPressed: () {},
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0, left: 8.0),
-          child: IconButton(
-            iconSize: 60,
-            icon: const CircleAvatar(
-              radius: 40,
-              backgroundImage: AssetImage('assets/profile_image.png'),
-            ),
-            onPressed: () {
-              final isMobile =
-                  Theme.of(context).platform == TargetPlatform.iOS ||
-                      Theme.of(context).platform == TargetPlatform.android;
+              actions: [
+                IconButton(
+                  iconSize: 42,
+                  icon: const Icon(Icons.search, color: Colors.white),
+                  onPressed: () {
+                    setState(() {
+                      isSearchActive = !isSearchActive;
+                    });
+                  },
+                ),
+                IconButton(
+                  iconSize: 42,
+                  icon: const Icon(Icons.notifications, color: Colors.white),
+                  onPressed: () {},
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0, left: 8.0),
+                  child: IconButton(
+                    iconSize: 60,
+                    icon: const CircleAvatar(
+                      radius: 40,
+                      backgroundImage: AssetImage('assets/profile_image.png'),
+                    ),
+                    onPressed: () {
+                      final isMobile = Theme.of(context).platform ==
+                              TargetPlatform.iOS ||
+                          Theme.of(context).platform == TargetPlatform.android;
 
-              if (isMobile) {
-                Scaffold.of(context).openEndDrawer();
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfilePage()),
-                );
-              }
-            },
-          ),
+                      if (isMobile) {
+                        Scaffold.of(context).openEndDrawer();
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ProfilePage()),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+            if (isSearchActive)
+              const SizedBox(
+                  height: 20), // Adjust spacing to prevent overlapping
+          ],
         ),
+        if (isSearchActive)
+          Positioned(
+            top: 120, // Ensure it appears below the AppBar
+            left: 0,
+            right: 0,
+            child: SearchBarWidget(
+              onClose: () {
+                setState(() {
+                  isSearchActive = false;
+                });
+              },
+            ),
+          ),
       ],
     );
   }
@@ -126,38 +163,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return PopupMenuButton<String>(
       tooltip: title,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0), // Add spacing
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
           title,
           style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),
       onSelected: (value) {
-        if (value == 'Rural Retailer Entry/Update') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const RetailerRegistrationApp()),
-          );
-        } else if (value == 'Token Scan') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const QrCodeScanner()),
-          );
-        } else if (value == 'Order Update') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const OrderUpdate()),
-          );
-        } else if (value == 'Order Entry') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const OrderEntry()),
-          );
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('$value clicked')));
-        }
+        _handleNavigation(context, value);
       },
       itemBuilder: (context) => links.map((link) {
         return PopupMenuItem<String>(
@@ -172,52 +185,25 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   Widget _buildSubMenu(BuildContext context, Map<String, dynamic> link) {
     return PopupMenuButton<String>(
-      offset: const Offset(200, 0), // Adjust the dropdown position to the right
+      offset: const Offset(200, 0),
       child: Padding(
-        padding: const EdgeInsets.only(
-            left: 30.0), // Shift submenu items slightly right
+        padding: const EdgeInsets.only(left: 30.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               link['title'],
-              style: const TextStyle(
-                fontWeight: FontWeight.bold, // Make the title bold
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 30.0),
-              child: const Icon(Icons.arrow_right, size: 16),
+            const Padding(
+              padding: EdgeInsets.only(right: 30.0),
+              child: Icon(Icons.arrow_right, size: 16),
             ),
           ],
         ),
       ),
       onSelected: (value) {
-        if (value == 'Rural Retailer Entry/Update') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const RetailerRegistrationPage()),
-          );
-        } else if (value == 'Token Scan') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const QrCodeScanner()),
-          );
-        } else if (value == 'Order Update') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const OrderUpdate()),
-          );
-        } else if (value == 'Order Entry') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const OrderEntry()),
-          );
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('$value clicked')));
-        }
+        _handleNavigation(context, value);
       },
       itemBuilder: (context) => link['subLinks']
           .map<PopupMenuItem<String>>((subLink) => PopupMenuItem<String>(
@@ -228,6 +214,31 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  @override
-  Size get preferredSize => const Size.fromHeight(100);
+  void _handleNavigation(BuildContext context, String value) {
+    if (value == 'Rural Retailer Entry/Update') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const RetailerRegistrationApp()),
+      );
+    } else if (value == 'Token Scan') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const QrCodeScanner()),
+      );
+    } else if (value == 'Order Update') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const OrderUpdate()),
+      );
+    } else if (value == 'Order Entry') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const OrderEntry()),
+      );
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('$value clicked')));
+    }
+  }
 }

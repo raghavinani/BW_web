@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/QR_scanner.dart';
+import 'package:login/custom_app_bar/sidebar_state.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({super.key});
@@ -15,28 +16,19 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   // Function that will be called when an item is tapped
   void onItemTapped(int index) {
     setState(() {
-      currentIndex = index; // Update the current index
+      currentIndex = index;
     });
 
-    // Open the drawer when a bottom navigation item is clicked
-    if (index == 0) {
-      // Show the 'Transactions' sublinks
-      Scaffold.of(context).openDrawer();
-    } else if (index == 1) {
-      // Show the 'Reports' sublinks
-      Scaffold.of(context).openDrawer();
-    } else if (index == 2) {
-      // Show the 'Masters' sublinks
-      Scaffold.of(context).openDrawer();
-    } else if (index == 3) {
-      // Show the 'Miscellaneous' sublinks
-      Scaffold.of(context).openDrawer();
-    } else if (index == 4) {
-      // Show QR Scanner screen or action
+    if (index == 4) {
+      // Open QR Scanner separately
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const QrCodeScanner()),
       );
+    } else {
+      // Update sidebar state and open drawer
+      sidebarState.expandSection(index);
+      Scaffold.of(context).openDrawer();
     }
   }
 

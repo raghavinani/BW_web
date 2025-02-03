@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/aadhar_kyc.dart';
+import 'package:login/content.dart';
 import 'package:login/view_orders.dart';
 
 class ProfileSidebar extends StatelessWidget {
@@ -93,7 +94,11 @@ class ProfileSidebar extends StatelessWidget {
                       icon: Icons.dashboard,
                       label: 'Dashboard',
                       onTap: () {
-                        Navigator.pop(context); // Close the sidebar
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ContentPage()),
+                        );
                       },
                     ),
                     _buildMenuItem(
