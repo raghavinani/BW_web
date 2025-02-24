@@ -8,13 +8,13 @@ class SearchBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80, // Reduce height to prevent overflow
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 2),
+      height: 30, // Reduce height to prevent overflow
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: TextField(
         textAlign: TextAlign.start,
-        style: const TextStyle(fontSize: 14, color: Colors.black),
+        style: const TextStyle(fontSize: 12, color: Colors.black),
         decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.search, size: 20, color: Colors.blue),
+          prefixIcon: const Icon(Icons.search, size: 12, color: Colors.blue),
           filled: true,
           fillColor: Colors.white,
           hintText: 'Search for reports, orders, etc.',
@@ -23,7 +23,7 @@ class SearchBarWidget extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(15.0)),
           ),
           suffixIcon: IconButton(
-            icon: const Icon(Icons.close, color: Colors.blue),
+            icon: const Icon(Icons.close, size: 12, color: Colors.blue),
             onPressed: onClose,
           ),
         ),

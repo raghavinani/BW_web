@@ -130,7 +130,8 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
 
           return SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -139,18 +140,18 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
                     const Text(
                       'Retailer Registration',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.blueAccent,
                       ),
                     ),
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 8.0),
                     isWideScreen
                         ? Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(child: _buildBasicDetailsForm()),
-                              const SizedBox(width: 16.0),
+                              const SizedBox(width: 8.0),
                               Expanded(child: _buildContactDetailsForm()),
                             ],
                           )
@@ -161,7 +162,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
                               _buildContactDetailsForm(),
                             ],
                           ),
-                    const SizedBox(height: 32.0),
+                    const SizedBox(height: 24.0),
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
@@ -197,7 +198,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
 
   Widget _buildBasicDetailsForm() {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
@@ -215,12 +216,12 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
           const Text(
             'Basic Details',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.blueAccent,
             ),
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 8.0),
           Row(
             children: [
               Expanded(
@@ -290,7 +291,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
 
   Widget _buildContactDetailsForm() {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
@@ -308,12 +309,12 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
           const Text(
             'Contact Details',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.blueAccent,
             ),
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 8.0),
           Row(
             children: [
               Expanded(
@@ -368,22 +369,26 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 4),
-        TextFormField(
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
+        Text(label, style: const TextStyle(fontSize: 12)),
+        const SizedBox(height: 2),
+        SizedBox(
+          height: 40,
+          child: TextFormField(
+            style: const TextStyle(fontSize: 14),
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
+            validator: (value) {
+              if (label.endsWith('*') && (value == null || value.isEmpty)) {
+                return 'This field is required';
+              }
+              return null;
+            },
           ),
-          validator: (value) {
-            if (label.endsWith('*') && (value == null || value.isEmpty)) {
-              return 'This field is required';
-            }
-            return null;
-          },
         ),
-        const SizedBox(height: 16.0),
+        const SizedBox(height: 8.0),
       ],
     );
   }
@@ -392,29 +397,36 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 4),
-        DropdownButtonFormField<String>(
-          items: items
-              .map((item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(item),
-                  ))
-              .toList(),
-          onChanged: (value) {},
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
+        Text(label, style: const TextStyle(fontSize: 12)),
+        const SizedBox(height: 2),
+        SizedBox(
+          height: 40,
+          child: DropdownButtonFormField<String>(
+            style: const TextStyle(fontSize: 12, color: Colors.black),
+            dropdownColor: Colors.blue.shade100,
+            items: items
+                .map((item) => DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(item,
+                          style: const TextStyle(
+                              fontSize: 12, color: Colors.black)),
+                    ))
+                .toList(),
+            onChanged: (value) {},
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
+            validator: (value) {
+              if (label.endsWith('*') && value == null) {
+                return 'This field is required';
+              }
+              return null;
+            },
           ),
-          validator: (value) {
-            if (label.endsWith('*') && value == null) {
-              return 'This field is required';
-            }
-            return null;
-          },
         ),
-        const SizedBox(height: 16.0),
+        const SizedBox(height: 8.0),
       ],
     );
   }
@@ -423,10 +435,10 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 8.0),
+        Text(label, style: const TextStyle(fontSize: 12)),
+        const SizedBox(height: 4.0),
         Wrap(
-          spacing: 8.0,
+          spacing: 4.0,
           children: options.map((option) {
             final isSelected = _selectedOption == option;
             return ChoiceChip(
@@ -445,7 +457,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
             );
           }).toList(),
         ),
-        const SizedBox(height: 16.0),
+        const SizedBox(height: 8.0),
       ],
     );
   }
@@ -454,37 +466,48 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(fontSize: 12)),
+        const SizedBox(height: 2),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ElevatedButton(
-              onPressed: _pickFile,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
+            SizedBox(
+              height: 30,
+              width: 60,
+              child: ElevatedButton(
+                onPressed: _pickFile,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  padding: EdgeInsets.zero,
+                ),
+                child: const Text('Upload',
+                    style: TextStyle(fontSize: 14, color: Colors.white)),
               ),
-              child:
-                  const Text('Upload', style: TextStyle(color: Colors.white)),
             ),
-            ElevatedButton(
-              onPressed: _uploadedFileName != null ? _viewFile : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+            SizedBox(
+              height: 30,
+              width: 60,
+              child: ElevatedButton(
+                onPressed: _uploadedFileName != null ? _viewFile : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: EdgeInsets.zero,
+                ),
+                child: const Text('View',
+                    style: TextStyle(fontSize: 14, color: Colors.white)),
               ),
-              child: const Text('View', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
         if (_uploadedFileName != null)
           Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.only(top: 4.0),
             child: Text(
               'Uploaded File: ${_uploadedFileName!.split('/').last}',
-              style: const TextStyle(color: Colors.grey),
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ),
-        const SizedBox(height: 16.0),
+        const SizedBox(height: 8.0),
       ],
     );
   }
@@ -493,18 +516,22 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 4),
-        TextFormField(
-          initialValue: value,
-          enabled: false,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
+        Text(label, style: const TextStyle(fontSize: 12)),
+        const SizedBox(height: 2),
+        SizedBox(
+          height: 40,
+          child: TextFormField(
+            initialValue: value,
+            enabled: false,
+            style: const TextStyle(fontSize: 14),
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 16.0),
+        const SizedBox(height: 8.0),
       ],
     );
   }

@@ -19,7 +19,7 @@ class _CustomCarouselState extends State<CustomCarousel> {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final carouselHeight = (screenHeight) / 3;
+    final carouselHeight = (screenHeight) / 3.5;
 
     return Column(
       children: [
@@ -61,20 +61,18 @@ class _CustomCarouselState extends State<CustomCarousel> {
             },
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
             imagePaths.length,
             (index) => AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              height: currentIndex == index ? 12 : 8,
-              width: currentIndex == index ? 12 : 8,
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              height: currentIndex == index ? 10 : 6,
+              width: currentIndex == index ? 10 : 6,
               decoration: BoxDecoration(
-                color: currentIndex == index
-                    ? const Color.fromARGB(255, 211, 80, 234)
-                    : Colors.grey,
+                color: currentIndex == index ? Colors.blue : Colors.grey,
                 shape: BoxShape.circle,
               ),
             ),

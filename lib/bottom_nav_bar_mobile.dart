@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/QR_scanner.dart';
-import 'package:login/custom_app_bar/sidebar_state.dart';
+import 'package:login/content.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({super.key});
@@ -11,24 +11,26 @@ class CustomBottomNavigationBar extends StatefulWidget {
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-  int currentIndex = -1; // Default selected index
+  int? tappedIndex;
 
-  // Function that will be called when an item is tapped
-  void onItemTapped(int index) {
+  void onItemTapped(int index, BuildContext context) {
     setState(() {
-      currentIndex = index;
+      tappedIndex = index;
     });
 
-    if (index == 4) {
-      // Open QR Scanner separately
-      Navigator.push(
+    Future.delayed(const Duration(seconds: 3), () {
+      setState(() {
+        tappedIndex = null;
+      });
+    });
+
+    if (index == 0) {
+      Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const QrCodeScanner()),
+        MaterialPageRoute(builder: (context) => const ContentPage()),
       );
-    } else {
-      // Update sidebar state and open drawer
-      sidebarState.expandSection(index);
-      Scaffold.of(context).openDrawer();
+    } else if (index == 1) {
+      Scaffold.of(context).openEndDrawer();
     }
   }
 
@@ -36,8 +38,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        height: 70.0,
-        margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+        height: 40.0,
+        margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
         decoration: BoxDecoration(
           color: Colors.white70,
           borderRadius: BorderRadius.circular(25.0),
@@ -56,49 +58,24 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // Transactions Icon
+                  // Home Button
                   GestureDetector(
-                    onTap: () => onItemTapped(0),
+                    onTap: () => onItemTapped(0, context),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.receipt_long_outlined,
-                          color: currentIndex == 0 ? Colors.blue : Colors.black,
-                          size: 45.0,
+                          Icons.home_outlined,
+                          color: tappedIndex == 0 ? Colors.blue : Colors.black,
+                          size: 21.0,
                         ),
                         Text(
-                          'Transactions',
+                          'Home',
                           style: TextStyle(
                             color:
-                                currentIndex == 0 ? Colors.blue : Colors.black,
-                            fontSize: 16.0,
-                            fontWeight: currentIndex == 0
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Reports Icon
-                  GestureDetector(
-                    onTap: () => onItemTapped(1),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.insert_chart_outlined,
-                          color: currentIndex == 1 ? Colors.blue : Colors.black,
-                          size: 45.0,
-                        ),
-                        Text(
-                          'Reports',
-                          style: TextStyle(
-                            color:
-                                currentIndex == 1 ? Colors.blue : Colors.black,
-                            fontSize: 16.0,
-                            fontWeight: currentIndex == 1
+                                tappedIndex == 0 ? Colors.blue : Colors.black,
+                            fontSize: 12.0,
+                            fontWeight: tappedIndex == 0
                                 ? FontWeight.bold
                                 : FontWeight.normal,
                           ),
@@ -107,50 +84,25 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                     ),
                   ),
                   // Spacer for QR scanner
-                  const SizedBox(width: 70.0),
-                  // Masters Icon
+                  const SizedBox(width: 100.0),
+                  // Menu Button
                   GestureDetector(
-                    onTap: () => onItemTapped(2),
+                    onTap: () => onItemTapped(1, context),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.settings_outlined,
-                          color: currentIndex == 2 ? Colors.blue : Colors.black,
-                          size: 45.0,
+                          Icons.menu,
+                          color: tappedIndex == 1 ? Colors.blue : Colors.black,
+                          size: 21.0,
                         ),
                         Text(
-                          'Masters',
+                          'Menu',
                           style: TextStyle(
                             color:
-                                currentIndex == 2 ? Colors.blue : Colors.black,
-                            fontSize: 16.0,
-                            fontWeight: currentIndex == 2
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Miscellaneous Icon
-                  GestureDetector(
-                    onTap: () => onItemTapped(3),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.more_horiz_outlined,
-                          color: currentIndex == 3 ? Colors.blue : Colors.black,
-                          size: 45.0,
-                        ),
-                        Text(
-                          'Miscellaneous',
-                          style: TextStyle(
-                            color:
-                                currentIndex == 3 ? Colors.blue : Colors.black,
-                            fontSize: 16.0,
-                            fontWeight: currentIndex == 3
+                                tappedIndex == 1 ? Colors.blue : Colors.black,
+                            fontSize: 12.0,
+                            fontWeight: tappedIndex == 1
                                 ? FontWeight.bold
                                 : FontWeight.normal,
                           ),
@@ -165,10 +117,18 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             Positioned(
               top: -10.0,
               bottom: -10,
-              left: MediaQuery.of(context).size.width / 2 - 80,
+              left: MediaQuery.of(context).size.width / 2 - 50,
               child: GestureDetector(
-                onTap: () => onItemTapped(4),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const QrCodeScanner()),
+                  );
+                },
                 child: Container(
+                  width: 50.0,
+                  height: 50.0,
                   decoration: BoxDecoration(
                     color: Colors.blue,
                     shape: BoxShape.circle,
@@ -180,11 +140,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.all(15.0),
-                  child: Icon(
+                  padding: const EdgeInsets.all(5.0),
+                  child: const Icon(
                     Icons.qr_code_scanner,
-                    color: currentIndex == 4 ? Colors.white : Colors.black,
-                    size: 60.0,
+                    color: Colors.white,
+                    size: 30.0,
                   ),
                 ),
               ),

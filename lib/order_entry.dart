@@ -101,26 +101,26 @@ class _OrderEntryState extends State<OrderEntry> {
 
   @override
   Widget build(BuildContext context) {
-    final isSmallScreen = MediaQuery.of(context).size.width < 800;
+    final isSmallScreen = MediaQuery.of(context).size.width < 1080;
 
     return Scaffold(
       appBar: CustomAppBar(),
       drawer: CustomSidebar(),
       endDrawer: const ProfileSidebar(),
       body: Container(
-        color: Colors.blue.shade600,
+        color: Colors.transparent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Static Heading bar
             Container(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               color: Colors.white,
               child: const Center(
                 child: Text(
                   'Order Entry',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.blueAccent,
                   ),
@@ -131,7 +131,7 @@ class _OrderEntryState extends State<OrderEntry> {
             // Scrollable content
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
                 child: Form(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,9 +145,9 @@ class _OrderEntryState extends State<OrderEntry> {
                             const Text(
                               'Order Details',
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18.0),
+                                  fontWeight: FontWeight.bold, fontSize: 16.0),
                             ),
-                            const SizedBox(height: 16.0),
+                            const SizedBox(height: 8.0),
                             Row(
                               children: [
                                 Expanded(
@@ -173,7 +173,7 @@ class _OrderEntryState extends State<OrderEntry> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 16.0),
+                            const SizedBox(height: 8.0),
                             Row(
                               children: [
                                 Expanded(
@@ -196,11 +196,11 @@ class _OrderEntryState extends State<OrderEntry> {
                                       const Text(
                                         'Mode of Transportation',
                                         style: TextStyle(
-                                          fontSize: 16.0,
+                                          fontSize: 12.0,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(height: 4.0),
+                                      const SizedBox(height: 2.0),
                                       Row(
                                         children: [
                                           _buildRoundedCheckbox(
@@ -212,7 +212,7 @@ class _OrderEntryState extends State<OrderEntry> {
                                               });
                                             },
                                           ),
-                                          const SizedBox(width: 16.0),
+                                          const SizedBox(width: 2.0),
                                           _buildRoundedCheckbox(
                                             'Road',
                                             !isRailTransport,
@@ -263,9 +263,9 @@ class _OrderEntryState extends State<OrderEntry> {
                             const Text(
                               'Products',
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18.0),
+                                  fontWeight: FontWeight.bold, fontSize: 12.0),
                             ),
-                            const SizedBox(height: 16.0),
+                            const SizedBox(height: 8.0),
                             ...productList.asMap().entries.map((entry) {
                               int index = entry.key;
                               Map<String, dynamic> product = entry.value;
@@ -566,92 +566,109 @@ class _OrderEntryState extends State<OrderEntry> {
     required List<String> options,
     ValueChanged<String?>? onChanged,
   }) {
-    // Ensure the value for 'Product' is not null when it's being used
     String? dropdownValue = label == 'Product'
         ? selectedProd1
         : (label == 'Unload Point' ? selectedUnloadPoint : selectedPlantCode);
 
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        border: const OutlineInputBorder(),
-      ),
-      value: dropdownValue,
-      items: options
-          .map((option) => DropdownMenuItem(value: option, child: Text(option)))
-          .toList(),
-      onChanged: (value) {
-        setState(() {
-          if (label == 'Product') {
-            if (selectedProd1 != null && selectedProd1 != value) {
-              // Check if any products have been added
-              double totalQtyMT = 0;
-              try {
-                totalQtyMT = double.parse(
-                  tableData1.firstWhere((row) =>
-                      row['Description'] == 'Total Order Qnty (MT)')['Lacs']!,
-                );
-              } catch (e) {
-                totalQtyMT = 0; // Default to 0 if there's an error parsing
-              }
-              if (totalQtyMT > 0) {
-                // Show confirmation dialog
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Confirm Change'),
-                    content: const Text(
-                        'All the products you added before will be moved to bin. Do you want to proceed?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            selectedProd1 = value; // Update selected product
-                            productList = [
-                              {
-                                'product': null,
-                                'qty': null,
-                                'scheduleDate': null
-                              }
-                            ]; // Reset product list
-                            _updateCreditLimitTable(); // Reset the credit limit table
-                          });
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
-                );
-              } else {
-                // Directly update if no products were added
-                setState(() {
-                  selectedProd1 = value;
-                });
-              }
-            } else {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double dropdownWidth = (MediaQuery.of(context).size.width - 60) / 2;
+
+        return SizedBox(
+          width: dropdownWidth, // Set width dynamically
+          height: 40, // Set height
+          child: DropdownButtonFormField<String>(
+            decoration: InputDecoration(
+              labelText: label,
+              labelStyle: const TextStyle(fontSize: 12), // Label size 12
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12, vertical: 8), // Adjust padding
+            ),
+            value: dropdownValue,
+            style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black), // Dropdown item & selected text size 14
+            items: options
+                .map((option) => DropdownMenuItem(
+                      value: option,
+                      child: Text(option,
+                          style: const TextStyle(
+                              fontSize: 14)), // Dropdown items size 14
+                    ))
+                .toList(),
+            onChanged: (value) {
               setState(() {
-                selectedProd1 = value;
+                if (label == 'Product') {
+                  if (selectedProd1 != null && selectedProd1 != value) {
+                    double totalQtyMT = 0;
+                    try {
+                      totalQtyMT = double.parse(
+                        tableData1.firstWhere((row) =>
+                            row['Description'] ==
+                            'Total Order Qnty (MT)')['Lacs']!,
+                      );
+                    } catch (e) {
+                      totalQtyMT = 0;
+                    }
+                    if (totalQtyMT > 0) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Confirm Change'),
+                          content: const Text(
+                              'All the products you added before will be moved to bin. Do you want to proceed?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  selectedProd1 = value;
+                                  productList = [
+                                    {
+                                      'product': null,
+                                      'qty': null,
+                                      'scheduleDate': null
+                                    }
+                                  ];
+                                  _updateCreditLimitTable();
+                                });
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      setState(() {
+                        selectedProd1 = value;
+                      });
+                    }
+                  } else {
+                    setState(() {
+                      selectedProd1 = value;
+                    });
+                  }
+                } else if (label == 'Unload Point') {
+                  setState(() {
+                    selectedUnloadPoint = value;
+                    _updatePurchaserAddress(value);
+                  });
+                } else {
+                  setState(() {
+                    selectedPlantCode = value;
+                  });
+                }
               });
-            }
-          } else if (label == 'Unload Point') {
-            setState(() {
-              selectedUnloadPoint = value;
-              _updatePurchaserAddress(value);
-            });
-          } else {
-            setState(() {
-              selectedPlantCode = value;
-            });
-          }
-        });
+            },
+          ),
+        );
       },
     );
   }
@@ -664,9 +681,9 @@ class _OrderEntryState extends State<OrderEntry> {
         children: [
           const Text(
             'Purchaser Details',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 8.0),
           _buildTable(tableData2),
         ],
       ),
@@ -681,9 +698,9 @@ class _OrderEntryState extends State<OrderEntry> {
         children: [
           const Text(
             'Credit Limit',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 8.0),
           _buildTable(tableData1),
         ],
       ),
@@ -693,7 +710,7 @@ class _OrderEntryState extends State<OrderEntry> {
   Widget _buildTable(List<Map<String, String>> data) {
     return Table(
       columnWidths: const {
-        0: FlexColumnWidth(2),
+        0: FlexColumnWidth(1),
         1: FlexColumnWidth(1),
       },
       border: TableBorder.all(color: Colors.grey),
@@ -703,11 +720,12 @@ class _OrderEntryState extends State<OrderEntry> {
               children: row.values
                   .map(
                     (value) => Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 2),
                       child: Text(
                         value,
                         style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14.0),
+                            fontWeight: FontWeight.w500, fontSize: 12.0),
                       ),
                     ),
                   )
@@ -730,7 +748,7 @@ class _OrderEntryState extends State<OrderEntry> {
         ),
         Text(
           label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12.0),
         ),
       ],
     );

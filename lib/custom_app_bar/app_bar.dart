@@ -16,7 +16,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize =>
-      const Size.fromHeight(160); // Adjust height dynamically
+      const Size.fromHeight(120); // Adjust height dynamically
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
@@ -29,7 +29,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     return Stack(
       children: [
         Container(
-          height: isSearchActive ? 240 : 130, // Ensure AppBar adjusts height
+          height: isSearchActive ? 120 : 90, // Ensure AppBar adjusts height
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -47,18 +47,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
             AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
-              toolbarHeight: 100,
+              toolbarHeight: 60,
               automaticallyImplyLeading: false,
               title: Row(
                 children: [
-                  IconButton(
-                    iconSize: 42,
-                    icon: const Icon(Icons.list, color: Colors.white),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
-                  ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -69,8 +64,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       },
                       child: Image.asset(
                         'assets/logo.jpeg',
-                        height: 60,
-                        width: 120,
+                        height: 30,
+                        width: 60,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -92,26 +87,29 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ],
               ),
               actions: [
-                IconButton(
-                  iconSize: 42,
-                  icon: const Icon(Icons.search, color: Colors.white),
-                  onPressed: () {
-                    setState(() {
-                      isSearchActive = !isSearchActive;
-                    });
-                  },
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: IconButton(
+                    iconSize: 21,
+                    icon: const Icon(Icons.search, color: Colors.white),
+                    onPressed: () {
+                      setState(() {
+                        isSearchActive = !isSearchActive;
+                      });
+                    },
+                  ),
                 ),
                 IconButton(
-                  iconSize: 42,
+                  iconSize: 21,
                   icon: const Icon(Icons.notifications, color: Colors.white),
                   onPressed: () {},
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 16.0, left: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
                   child: IconButton(
-                    iconSize: 60,
+                    iconSize: 30,
                     icon: const CircleAvatar(
-                      radius: 40,
+                      radius: 20,
                       backgroundImage: AssetImage('assets/profile_image.png'),
                     ),
                     onPressed: () {
@@ -133,14 +131,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
               ],
             ),
-            if (isSearchActive)
-              const SizedBox(
-                  height: 20), // Adjust spacing to prevent overlapping
           ],
         ),
         if (isSearchActive)
           Positioned(
-            top: 120, // Ensure it appears below the AppBar
+            top: 86, // Ensure it appears below the AppBar
             left: 0,
             right: 0,
             child: SearchBarWidget(
@@ -163,10 +158,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
     return PopupMenuButton<String>(
       tooltip: title,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
         child: Text(
           title,
-          style: const TextStyle(color: Colors.white, fontSize: 16),
+          style: const TextStyle(color: Colors.white, fontSize: 12),
         ),
       ),
       onSelected: (value) {
@@ -187,7 +182,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     return PopupMenuButton<String>(
       offset: const Offset(200, 0),
       child: Padding(
-        padding: const EdgeInsets.only(left: 30.0),
+        padding: const EdgeInsets.only(left: 8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -196,8 +191,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const Padding(
-              padding: EdgeInsets.only(right: 30.0),
-              child: Icon(Icons.arrow_right, size: 16),
+              padding: EdgeInsets.only(right: 16.0),
+              child: Icon(Icons.arrow_right, size: 12),
             ),
           ],
         ),

@@ -3,7 +3,6 @@ import 'package:login/custom_app_bar/profile_sidebar.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:login/bottom_nav_bar_mobile.dart';
 
 void main() {
   runApp(const QrCodeScanner());
@@ -42,27 +41,35 @@ class _HomePageState extends State<HomePage> {
         children: [
           // Main content
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Text(
                   'Token Scan',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.blueAccent,
                   ),
                 ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: _tokenController,
-                  decoration: const InputDecoration(
-                    labelText: 'Token Number',
-                    border: OutlineInputBorder(),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 40,
+                  child: TextField(
+                    controller: _tokenController,
+                    style: const TextStyle(
+                        fontSize: 16), // Adjust text size inside the field
+                    decoration: const InputDecoration(
+                      labelText: 'Token Number',
+                      labelStyle: TextStyle(fontSize: 16), // Label size
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 12), // Adjust padding
+                    ),
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 24),
                 Center(
                   child: SizedBox(
                     width: 200,

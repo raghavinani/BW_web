@@ -29,15 +29,15 @@ class ContentPage extends StatelessWidget {
 
 class AppConfig {
   static const double smallScreenBreakpoint = 800.0;
-  static const double boxPadding = 16.0;
+  static const double boxPadding = 4.0;
   static const double borderRadius = 8.0;
   static const double shadowBlurRadius = 6.0;
   static const double shadowSpreadRadius = 2.0;
   static const Color boxBackgroundColor = Colors.white;
   static const Color boxShadowColor = Colors.black26;
   static const Color borderColor = Colors.grey;
-  static const double titleFontSize = 24.0;
-  static const double valueFontSize = 18.0;
+  static const double titleFontSize = 18.0;
+  static const double valueFontSize = 12.0;
   static const Map<String, List<String>> boxContents = {
     'Credit Limit': ['Credit Limit: 0', 'Open Billing: 0', 'Open Order: 0'],
     'Primary Sale': [
@@ -117,7 +117,7 @@ class HomeBase extends StatelessWidget {
         children: [
           // Main content
           Container(
-            color: Colors.grey.shade300,
+            color: AppConfig.boxBackgroundColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -129,12 +129,15 @@ class HomeBase extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(
-                              vertical: 16.0, horizontal: AppConfig.boxPadding),
+                              vertical: AppConfig.boxPadding * 2,
+                              horizontal: AppConfig.boxPadding),
                           child: const CustomCarousel(),
                         ),
                         _buildHorizontalQuickMenu(),
                         Padding(
-                          padding: const EdgeInsets.all(AppConfig.boxPadding),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: AppConfig.boxPadding * 2,
+                              horizontal: AppConfig.boxPadding),
                           child: _buildBoxesLayout(isMobile, isSmallScreen,
                               screenWidth, screenHeight),
                         ),
@@ -167,6 +170,7 @@ class HomeBase extends StatelessWidget {
 
   Widget _buildHeader() {
     return Container(
+      height: 40,
       padding: const EdgeInsets.all(AppConfig.boxPadding),
       color: Colors.blue.shade50,
       child: const Center(
@@ -181,18 +185,50 @@ class HomeBase extends StatelessWidget {
 
   Widget _buildBoxesLayout(bool isMobile, bool isSmallScreen,
       double screenWidth, double screenHeight) {
-    final boxContents = AppConfig.boxContents.entries.map((entry) => _buildBox(
-          title: entry.key,
-          values: entry.value,
-          width: isMobile || isSmallScreen
-              ? screenWidth
-              : (screenWidth / 4) - (AppConfig.boxPadding * 2),
-        ));
-    return isMobile || isSmallScreen
-        ? Column(children: boxContents.toList())
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: boxContents.toList());
+    final boxWidgets = AppConfig.boxContents.entries
+        .map((entry) => _buildBox(
+              title: entry.key,
+              values: entry.value,
+              width: isMobile || isSmallScreen
+                  ? screenWidth - (AppConfig.boxPadding * 2)
+                  : (screenWidth / 4) - (AppConfig.boxPadding * 2),
+            ))
+        .toList();
+
+    if (isMobile || isSmallScreen) {
+      return Column(children: boxWidgets);
+    } else {
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          // Find max height of all boxes
+          double maxHeight = 0;
+          List<GlobalKey> boxKeys =
+              List.generate(boxWidgets.length, (_) => GlobalKey());
+
+          return FutureBuilder(
+            future: Future.delayed(Duration.zero, () {
+              maxHeight = boxKeys
+                  .map((key) => key.currentContext?.size?.height ?? 0)
+                  .reduce((a, b) => a > b ? a : b);
+              return maxHeight;
+            }),
+            builder: (context, snapshot) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(boxWidgets.length, (index) {
+                  return Container(
+                    key: boxKeys[index],
+                    constraints:
+                        BoxConstraints(minHeight: snapshot.data ?? 200),
+                    child: boxWidgets[index],
+                  );
+                }),
+              );
+            },
+          );
+        },
+      );
+    }
   }
 
   Widget _buildBox({
@@ -202,7 +238,6 @@ class HomeBase extends StatelessWidget {
   }) {
     return Container(
       width: width,
-      // height: height,
       margin: const EdgeInsets.only(bottom: AppConfig.boxPadding),
       decoration: BoxDecoration(
         color: AppConfig.boxBackgroundColor,
@@ -230,67 +265,58 @@ class HomeBase extends StatelessWidget {
                   color: Colors.black),
             ),
           ),
-          const SizedBox(height: 16),
-          // Graph and Information Layout (Horizontal Row)
-          Row(
+          const SizedBox(height: 8),
+
+          // Graph positioned below title
+          Center(
+            child: Image.asset(
+              'assets/graph.png',
+              width: 200, // Set square aspect ratio
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Information positioned below the graph
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Graph on the left side (using an image from assets)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                child: Image.asset(
-                  'assets/graph.png',
-                  width: 300,
-                  height: 200,
-                ),
-              ),
-              const SizedBox(width: 30),
-              // Information on the right side (values list)
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: values.map((value) {
-                      final valueParts = value.split(':');
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(Icons.remove,
-                                size: 16, color: Colors.blueGrey),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                valueParts[0].trim(),
-                                style: const TextStyle(
-                                  fontSize: AppConfig.valueFontSize,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                valueParts[1].trim(),
-                                style: const TextStyle(
-                                  fontSize: AppConfig.valueFontSize,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ],
+            children: values.map((value) {
+              final valueParts = value.split(':');
+              return Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 4, vertical: 2.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.remove, size: 16, color: Colors.blueGrey),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        valueParts[0].trim(),
+                        style: const TextStyle(
+                          fontSize: AppConfig.valueFontSize,
+                          color: Colors.black54,
                         ),
-                      );
-                    }).toList(),
-                  ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        valueParts[1].trim(),
+                        style: const TextStyle(
+                          fontSize: AppConfig.valueFontSize,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+              );
+            }).toList(),
           ),
         ],
       ),
@@ -300,62 +326,65 @@ class HomeBase extends StatelessWidget {
   Widget _buildHorizontalQuickMenu() {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, // Ensures it takes only needed height
         children: [
           const Text(
             'Quick Menu',
             style: TextStyle(
-                fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
           const SizedBox(height: 4),
-          SizedBox(
-            height: 180,
+          Flexible(
             child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4, // Set to 4 items per row
-                  childAspectRatio: 1.5, // Make items square
-                ),
-                itemCount: quickMenuItems.length,
-                itemBuilder: (context, index) {
-                  final item = quickMenuItems[index];
-                  return GestureDetector(
-                      onTap: () =>
-                          _handleQuickMenuItemTap(context, item['label']),
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 0),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.rectangle,
+              shrinkWrap: true, // Takes only required space
+              physics:
+                  const NeverScrollableScrollPhysics(), // Disable scrolling
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                childAspectRatio: 1.2, // Adjust as needed
+              ),
+              itemCount: quickMenuItems.length,
+              itemBuilder: (context, index) {
+                final item = quickMenuItems[index];
+                return GestureDetector(
+                  onTap: () => _handleQuickMenuItemTap(context, item['label']),
+                  child: Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.rectangle,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          item['icon'] as IconData,
+                          size: 21,
+                          color: Colors.black,
                         ),
-                        child: Column(
-                          mainAxisAlignment:
-                              MainAxisAlignment.center, // Center the icon
-                          children: [
-                            Icon(
-                              item['icon']
-                                  as IconData, // Assuming 'icon' is part of the item map
-                              size: 45,
-                              color: Colors.black,
-                            ),
-                            const SizedBox(
-                                height: 4), // Space between icon and label
-                            Text(
-                              item['label'].replaceAll(' ',
-                                  '\n'), // Replace spaces with newlines for better formatting
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
+                        const SizedBox(height: 4),
+                        Text(
+                          item['label'].replaceAll(' ', '\n'),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.black,
+                          ),
                         ),
-                      ));
-                }),
-          )
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
