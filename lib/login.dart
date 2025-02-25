@@ -89,7 +89,7 @@ class _MyLoginState extends State<MyLogin> {
             SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.5),
+                    top: MediaQuery.of(context).size.height * 0.4),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -128,7 +128,7 @@ class _MyLoginState extends State<MyLogin> {
                                   borderRadius: BorderRadius.circular(10),
                                 )),
                           ),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 30),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -146,6 +146,7 @@ class _MyLoginState extends State<MyLogin> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

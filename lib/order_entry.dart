@@ -114,7 +114,7 @@ class _OrderEntryState extends State<OrderEntry> {
           children: [
             // Static Heading bar
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               color: Colors.white,
               child: const Center(
                 child: Text(
@@ -131,7 +131,7 @@ class _OrderEntryState extends State<OrderEntry> {
             // Scrollable content
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
                 child: Form(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,7 +161,7 @@ class _OrderEntryState extends State<OrderEntry> {
                                     },
                                   ),
                                 ),
-                                const SizedBox(width: 8.0),
+                                const SizedBox(width: 4.0),
                                 Expanded(
                                   child: _buildProductDropdown(
                                     label: 'Unload Point',
@@ -187,7 +187,7 @@ class _OrderEntryState extends State<OrderEntry> {
                                     },
                                   ),
                                 ),
-                                const SizedBox(width: 8.0),
+                                const SizedBox(width: 5.0),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -197,10 +197,9 @@ class _OrderEntryState extends State<OrderEntry> {
                                         'Mode of Transportation',
                                         style: TextStyle(
                                           fontSize: 12.0,
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight: FontWeight.w700,
                                         ),
                                       ),
-                                      const SizedBox(height: 2.0),
                                       Row(
                                         children: [
                                           _buildRoundedCheckbox(
@@ -232,13 +231,13 @@ class _OrderEntryState extends State<OrderEntry> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 4.0),
                       // Purchaser Details and Credit Limit
                       isSmallScreen
                           ? Column(
                               children: [
                                 _buildPurchaserDetailCard(isSmallScreen),
-                                const SizedBox(height: 16.0),
+                                const SizedBox(height: 4.0),
                                 _buildCreditLimitCard(isSmallScreen),
                               ],
                             )
@@ -248,210 +247,281 @@ class _OrderEntryState extends State<OrderEntry> {
                                 Expanded(
                                     child: _buildPurchaserDetailCard(
                                         isSmallScreen)),
-                                const SizedBox(width: 16.0),
+                                const SizedBox(width: 4.0),
                                 Expanded(
                                     child:
                                         _buildCreditLimitCard(isSmallScreen)),
                               ],
                             ),
-                      const SizedBox(height: 16.0),
-                      // Products Section
-                      _buildCard(
-                        isSmallScreen,
-                        child: Column(
-                          children: [
-                            const Text(
-                              'Products',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 12.0),
-                            ),
-                            const SizedBox(height: 8.0),
-                            ...productList.asMap().entries.map((entry) {
-                              int index = entry.key;
-                              Map<String, dynamic> product = entry.value;
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: DropdownButtonFormField<String>(
-                                        value: product['product'] as String?,
-                                        items: (selectedProd1 != null
-                                                ? productVariants[
-                                                    selectedProd1]!
-                                                : [])
-                                            .map((option) =>
-                                                DropdownMenuItem<String>(
-                                                    value: option,
-                                                    child: Text(option)))
-                                            .toList(),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            product['product'] = value;
-                                          });
-                                        },
-                                        validator: (value) => value == null
-                                            ? 'Please select a product'
-                                            : null,
-                                        decoration: InputDecoration(
-                                          labelText: 'Product*',
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8.0),
-                                    Expanded(
-                                      child: TextFormField(
-                                        keyboardType: TextInputType.number,
-                                        enabled: product['product'] != null,
-                                        decoration: InputDecoration(
-                                          labelText: 'Qty (MT)*',
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                        ),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            product['qty'] = value;
-                                            _updateCreditLimitTable();
-                                          });
-                                        },
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return 'Please enter quantity';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8.0),
-                                    Expanded(
-                                      child: TextFormField(
-                                        readOnly: true,
-                                        controller: TextEditingController(
-                                            text: product['scheduleDate']),
-                                        decoration: InputDecoration(
-                                          labelText: 'Schedule Date*',
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          DateTime? pickedDate =
-                                              await showDatePicker(
-                                            context: context,
-                                            initialDate: DateTime.now(),
-                                            firstDate: DateTime.now(),
-                                            lastDate: DateTime(2100),
-                                          );
-                                          if (pickedDate != null) {
-                                            setState(() {
-                                              product['scheduleDate'] =
-                                                  pickedDate
-                                                      .toString()
-                                                      .substring(0, 10);
-                                            });
-                                          }
-                                        },
-                                        validator: (value) =>
-                                            value == null || value.isEmpty
-                                                ? 'Please select a date'
-                                                : null,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8.0),
-                                    Row(
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              productList.add({
-                                                'product': null,
-                                                'qty': null,
-                                                'scheduleDate': null,
-                                              });
-                                            });
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.green,
-                                          ),
-                                          child: const Text(
-                                            'Add',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14.0,
-                                                color: Colors.black),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8.0),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            if (productList.length > 1) {
-                                              setState(() {
-                                                productList.removeAt(index);
-                                                _updateCreditLimitTable();
-                                              });
-                                            }
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.red,
-                                          ),
-                                          child: const Text(
-                                            'Delete',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14.0,
-                                                color: Colors.black),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                          ],
-                        ),
-                      ),
-                      _buildCard(
-                        isSmallScreen,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Order Remarks',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16.0),
-                            Center(
-                                child: ElevatedButton(
-                              onPressed: _handleSubmit,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0, vertical: 15.0),
-                                backgroundColor: Colors.blue,
-                              ),
-                              child: const Text(
-                                'Submit',
+                      const SizedBox(height: 4.0),
+
+                      if (selectedProd1 != null) ...[
+                        // Products Section
+                        _buildCard(
+                          isSmallScreen,
+                          child: Column(
+                            children: [
+                              const Text(
+                                'Products',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 18.0,
-                                    color: Colors.black),
+                                    fontSize: 14.0),
                               ),
-                            )),
-                          ],
+                              const SizedBox(height: 8.0),
+                              Column(
+                                children: [
+                                  ...productList.asMap().entries.map((entry) {
+                                    int index = entry.key;
+                                    Map<String, dynamic> product = entry.value;
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 20,
+                                            child:
+                                                DropdownButtonFormField<String>(
+                                              value:
+                                                  product['product'] as String?,
+                                              items: (selectedProd1 != null
+                                                      ? productVariants[
+                                                          selectedProd1]!
+                                                      : [])
+                                                  .map((option) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: option,
+                                                        child: Text(option,
+                                                            style: TextStyle(
+                                                                fontSize:
+                                                                    12.0)),
+                                                      ))
+                                                  .toList(),
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  product['product'] = value;
+                                                });
+                                              },
+                                              validator: (value) => value ==
+                                                      null
+                                                  ? 'Please select a product'
+                                                  : null,
+                                              decoration: InputDecoration(
+                                                labelText: 'Product*',
+                                                labelStyle:
+                                                    TextStyle(fontSize: 12.0),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 10.0,
+                                                        horizontal: 8.0),
+                                                constraints: BoxConstraints(
+                                                    maxHeight: 40),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4.0),
+                                          Expanded(
+                                            flex: 5,
+                                            child: TextFormField(
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              enabled:
+                                                  product['product'] != null,
+                                              decoration: InputDecoration(
+                                                labelText: 'Qty (MT)*',
+                                                labelStyle:
+                                                    TextStyle(fontSize: 12.0),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 10.0,
+                                                        horizontal: 8.0),
+                                                constraints: BoxConstraints(
+                                                    maxHeight: 40),
+                                              ),
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  product['qty'] = value;
+                                                  _updateCreditLimitTable();
+                                                });
+                                              },
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Please enter quantity';
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4.0),
+                                          Expanded(
+                                            flex: 10,
+                                            child: TextFormField(
+                                              readOnly: true,
+                                              controller: TextEditingController(
+                                                  text:
+                                                      product['scheduleDate']),
+                                              decoration: InputDecoration(
+                                                labelText: 'Schedule Date*',
+                                                labelStyle:
+                                                    TextStyle(fontSize: 12.0),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 10.0,
+                                                        horizontal: 8.0),
+                                                constraints: BoxConstraints(
+                                                    maxHeight: 40),
+                                              ),
+                                              onTap: () async {
+                                                DateTime? pickedDate =
+                                                    await showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime.now(),
+                                                  firstDate: DateTime.now(),
+                                                  lastDate: DateTime(2100),
+                                                );
+                                                if (pickedDate != null) {
+                                                  setState(() {
+                                                    product['scheduleDate'] =
+                                                        pickedDate
+                                                            .toString()
+                                                            .substring(0, 10);
+                                                  });
+                                                }
+                                              },
+                                              validator: (value) =>
+                                                  value == null || value.isEmpty
+                                                      ? 'Please select a date'
+                                                      : null,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4.0),
+                                          Expanded(
+                                            flex: 5,
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                if (productList.length > 1) {
+                                                  setState(() {
+                                                    productList.removeAt(index);
+                                                    _updateCreditLimitTable();
+                                                  });
+                                                }
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.red,
+                                                fixedSize:
+                                                    const Size.fromHeight(40),
+                                                minimumSize: const Size(40,
+                                                    40), // Ensures square size
+                                                padding: EdgeInsets
+                                                    .zero, // Removes extra padding
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0), // Optional: Rounded corners
+                                                ),
+                                              ),
+                                              child: const Icon(Icons.delete,
+                                                  color: Colors.white,
+                                                  size: 18),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 1,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                productList.insert(
+                                                    productList.length - 1, {
+                                                  'product': null,
+                                                  'qty': null,
+                                                  'scheduleDate': null,
+                                                });
+                                              });
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.green,
+                                              fixedSize:
+                                                  const Size.fromHeight(40),
+                                            ),
+                                            child: const Text(
+                                              'Add',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 10.0,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
+
+                        _buildCard(
+                          isSmallScreen,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Order Remarks',
+                                  labelStyle: TextStyle(fontSize: 12.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 4.0),
+                                ),
+                              ),
+                              const SizedBox(height: 8.0),
+                              Center(
+                                  child: ElevatedButton(
+                                onPressed: _handleSubmit,
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 5.0),
+                                  backgroundColor: Colors.blue,
+                                ),
+                                child: const Text(
+                                  'Submit',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0,
+                                      color: Colors.black),
+                                ),
+                              )),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -465,11 +535,11 @@ class _OrderEntryState extends State<OrderEntry> {
 
   Widget _buildCard(bool isSmallScreen, {required Widget child}) {
     return Card(
-      margin: EdgeInsets.all(isSmallScreen ? 8.0 : 16.0),
+      margin: EdgeInsets.all(isSmallScreen ? 5.0 : 10.0),
       elevation: 4.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       child: Padding(
-        padding: EdgeInsets.all(isSmallScreen ? 8.0 : 16.0),
+        padding: EdgeInsets.all(isSmallScreen ? 5.0 : 10.0),
         child: child,
       ),
     );
@@ -531,13 +601,14 @@ class _OrderEntryState extends State<OrderEntry> {
                 Navigator.of(context).pop(); // Close the dialog
 
                 // Save the product list to the global state
-                global_state.productList.addAll(productList);
+                global_state.productList = List.from(productList);
 
-                //showing the SnackBar to ensure dialog has closed
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Order Submitted!')),
-                );
+                // Delay showing the SnackBar to ensure dialog has closed
+                Future.delayed(Duration(milliseconds: 100), () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Order Submitted!')),
+                  );
+                });
 
                 setState(() {
                   // Reset product list, you can adjust this to your needs
@@ -576,7 +647,7 @@ class _OrderEntryState extends State<OrderEntry> {
 
         return SizedBox(
           width: dropdownWidth, // Set width dynamically
-          height: 40, // Set height
+          // height: 40, // Set height
           child: DropdownButtonFormField<String>(
             decoration: InputDecoration(
               labelText: label,
@@ -598,74 +669,72 @@ class _OrderEntryState extends State<OrderEntry> {
                     ))
                 .toList(),
             onChanged: (value) {
-              setState(() {
-                if (label == 'Product') {
-                  if (selectedProd1 != null && selectedProd1 != value) {
-                    double totalQtyMT = 0;
-                    try {
-                      totalQtyMT = double.parse(
-                        tableData1.firstWhere((row) =>
-                            row['Description'] ==
-                            'Total Order Qnty (MT)')['Lacs']!,
-                      );
-                    } catch (e) {
-                      totalQtyMT = 0;
-                    }
-                    if (totalQtyMT > 0) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Confirm Change'),
-                          content: const Text(
-                              'All the products you added before will be moved to bin. Do you want to proceed?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  selectedProd1 = value;
-                                  productList = [
-                                    {
-                                      'product': null,
-                                      'qty': null,
-                                      'scheduleDate': null
-                                    }
-                                  ];
-                                  _updateCreditLimitTable();
-                                });
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      setState(() {
-                        selectedProd1 = value;
-                      });
-                    }
+              if (label == 'Product') {
+                if (selectedProd1 != null && selectedProd1 != value) {
+                  double totalQtyMT = 0;
+                  try {
+                    totalQtyMT = double.parse(
+                      tableData1.firstWhere((row) =>
+                          row['Description'] ==
+                          'Total Order Qnty (MT)')['Lacs']!,
+                    );
+                  } catch (e) {
+                    totalQtyMT = 0;
+                  }
+                  if (totalQtyMT > 0) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Confirm Change'),
+                        content: const Text(
+                            'All the products you added before will be moved to bin. Do you want to proceed?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                selectedProd1 = value;
+                                productList = [
+                                  {
+                                    'product': null,
+                                    'qty': null,
+                                    'scheduleDate': null
+                                  }
+                                ];
+                                _updateCreditLimitTable();
+                              });
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
                   } else {
                     setState(() {
                       selectedProd1 = value;
                     });
                   }
-                } else if (label == 'Unload Point') {
-                  setState(() {
-                    selectedUnloadPoint = value;
-                    _updatePurchaserAddress(value);
-                  });
                 } else {
                   setState(() {
-                    selectedPlantCode = value;
+                    selectedProd1 = value;
                   });
                 }
-              });
+              } else if (label == 'Unload Point') {
+                setState(() {
+                  selectedUnloadPoint = value;
+                  _updatePurchaserAddress(value);
+                });
+              } else {
+                setState(() {
+                  selectedPlantCode = value;
+                });
+              }
             },
           ),
         );

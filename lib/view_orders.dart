@@ -35,11 +35,12 @@ class ManageOrderPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 50,
         title: const Text(
           'Manage Orders',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 22,
+            fontSize: 18,
           ),
         ),
         centerTitle: true,
@@ -54,8 +55,8 @@ class ManageOrderPage extends StatelessWidget {
                 color: Colors.purple[700],
                 borderRadius: BorderRadius.circular(12),
               ),
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              padding: const EdgeInsets.all(20),
+              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -69,10 +70,10 @@ class ManageOrderPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '₹${totalOutstanding.toStringAsFixed(2)}',
+                    '₹ ${totalOutstanding.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 24,
+                      fontSize: 18,
                       color: Colors.white,
                     ),
                   ),
@@ -88,7 +89,7 @@ class ManageOrderPage extends StatelessWidget {
 
                   return Container(
                     margin:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Colors.deepPurple, // Border color
@@ -98,7 +99,7 @@ class ManageOrderPage extends StatelessWidget {
                           BorderRadius.circular(12), // Rounded corners
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -106,10 +107,10 @@ class ManageOrderPage extends StatelessWidget {
                             'Scheduled Date: $date',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 14,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           ...products.map((product) {
                             double qty = double.parse(product['qty'] ?? '0');
                             double kg =

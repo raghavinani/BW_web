@@ -8,7 +8,7 @@ class SearchBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 30, // Reduce height to prevent overflow
+      height: 40, // Reduce height to prevent overflow
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: TextField(
         textAlign: TextAlign.start,

@@ -130,11 +130,12 @@ class _AadharCardKYCPageState extends State<AadharCardKYCPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 50,
         title: const Text(
           'Aadhar Card KYC',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 22,
+            fontSize: 18,
           ),
         ),
         centerTitle: true,
@@ -142,27 +143,29 @@ class _AadharCardKYCPageState extends State<AadharCardKYCPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
                 'Aadhar Card Verification',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: aadharController,
-                decoration: const InputDecoration(
-                  labelText: 'Aadhar Number',
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter your Aadhar Number',
+              SizedBox(
+                height: 60,
+                child: TextField(
+                  controller: aadharController,
+                  decoration: const InputDecoration(
+                    labelText: 'Aadhar Number',
+                    border: OutlineInputBorder(),
+                    hintText: 'Enter your Aadhar Number',
+                  ),
+                  keyboardType: TextInputType.number,
+                  maxLength: 12,
                 ),
-                keyboardType: TextInputType.number,
-                maxLength: 12,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
               Center(
                 child: SizedBox(
                   width: 150, // Set the width of the button
@@ -170,7 +173,7 @@ class _AadharCardKYCPageState extends State<AadharCardKYCPage> {
                     onPressed: generateOtp,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[900], // Dark blue color
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
                     ),
                     child: const Text(
                       'Generate OTP',
@@ -183,7 +186,7 @@ class _AadharCardKYCPageState extends State<AadharCardKYCPage> {
                 ),
               ),
               if (isOtpSent) ...[
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 TextField(
                   controller: captchaController,
                   decoration: const InputDecoration(
@@ -191,7 +194,7 @@ class _AadharCardKYCPageState extends State<AadharCardKYCPage> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 TextField(
                   controller: otpController,
                   decoration: const InputDecoration(
@@ -199,7 +202,7 @@ class _AadharCardKYCPageState extends State<AadharCardKYCPage> {
                     border: OutlineInputBorder(),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: verifyOtp,
                   child: const Text('Verify OTP'),

@@ -3,6 +3,7 @@ import 'package:login/custom_app_bar/profile_sidebar.dart';
 import 'dart:core';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
+import 'package:login/view_orders.dart';
 import 'package:login/global_state.dart' as global_state;
 
 class OrderUpdate extends StatefulWidget {
@@ -109,19 +110,19 @@ class _OrderEntryState extends State<OrderUpdate> {
       drawer: CustomSidebar(),
       endDrawer: const ProfileSidebar(),
       body: Container(
-        color: Colors.blue.shade600,
+        color: Colors.transparent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Static Heading bar
             Container(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               color: Colors.white,
               child: const Center(
                 child: Text(
                   'Order Update',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.blueAccent,
                   ),
@@ -132,7 +133,7 @@ class _OrderEntryState extends State<OrderUpdate> {
             // Scrollable content
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 0),
                 child: Form(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,58 +148,44 @@ class _OrderEntryState extends State<OrderUpdate> {
                               'Order Type',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18.0), // Larger font
+                                  fontSize: 14.0), // Larger font
                             ),
-                            const SizedBox(height: 16.0),
-                            Row(
-                              children: [
-                                Expanded(child: _buildProcessTypeCheckboxes()),
-                                const SizedBox(width: 8.0),
-                                Expanded(
-                                  child: _buildProductDropdown(
-                                    label: 'Product',
-                                    options: prod1Options,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedProd1 = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ],
+                            const SizedBox(height: 2.0),
+                            _buildProcessTypeCheckboxes(),
+                            const SizedBox(height: 4.0),
+                            _buildProductDropdown(
+                              label: 'Product',
+                              options: prod1Options,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedProd1 = value;
+                                });
+                              },
                             ),
-                            const SizedBox(height: 16.0),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildProductDropdown(
-                                    label: 'Unload Point',
-                                    options: unloadPointOptions,
-                                    onChanged: (value) {
-                                      _updatePurchaserAddress(value);
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: 8.0),
-                                if (_showDocuNumCard)
-                                  Expanded(
-                                    child: _buildProductDropdown(
-                                      label: 'Document NO.',
-                                      options: docuNumOptions,
-                                    ),
-                                  ),
-                              ],
+                            const SizedBox(height: 8.0),
+                            _buildProductDropdown(
+                              label: 'Unload Point',
+                              options: unloadPointOptions,
+                              onChanged: (value) {
+                                _updatePurchaserAddress(value);
+                              },
                             ),
+                            const SizedBox(height: 8.0),
+                            if (_showDocuNumCard)
+                              _buildProductDropdown(
+                                label: 'Document NO.',
+                                options: docuNumOptions,
+                              ),
                           ],
                         ),
                       ),
                       // Purchaser Details and Credit Limit
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 4.0),
                       isSmallScreen
                           ? Column(
                               children: [
                                 _buildPurchaserDetailCard(isSmallScreen),
-                                const SizedBox(height: 16.0),
+                                const SizedBox(height: 4.0),
                                 _buildCreditLimitCard(isSmallScreen),
                               ],
                             )
@@ -208,13 +195,13 @@ class _OrderEntryState extends State<OrderUpdate> {
                                 Expanded(
                                     child: _buildPurchaserDetailCard(
                                         isSmallScreen)),
-                                const SizedBox(width: 16.0),
+                                const SizedBox(width: 4.0),
                                 Expanded(
                                     child:
                                         _buildCreditLimitCard(isSmallScreen)),
                               ],
                             ),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 4.0),
                       // Conditionally show Products and Order Remarks only if a product is selected
                       if (selectedProd1 != null) ...[
                         // Products Section
@@ -226,102 +213,197 @@ class _OrderEntryState extends State<OrderUpdate> {
                                 'Products',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 18.0),
+                                    fontSize: 14.0),
                               ),
-                              const SizedBox(height: 16.0),
-                              ...productList.asMap().entries.map((entry) {
-                                int index = entry.key;
-                                Map<String, dynamic> product = entry.value;
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 16.0),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: DropdownButtonFormField<String>(
-                                          value: product['product'] as String?,
-                                          items: (selectedProd1 != null
-                                                  ? productVariants[
-                                                      selectedProd1]!
-                                                  : [])
-                                              .map((option) =>
-                                                  DropdownMenuItem<String>(
-                                                      value: option,
-                                                      child: Text(option)))
-                                              .toList(),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              product['product'] = value;
-                                            });
-                                          },
-                                          decoration: InputDecoration(
-                                            labelText: 'Product*',
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8.0),
-                                      Expanded(
-                                        child: TextFormField(
-                                          keyboardType: TextInputType.number,
-                                          enabled: product['product'] != null,
-                                          decoration: InputDecoration(
-                                            labelText: 'Qty (MT)*',
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              product['qty'] = value;
-                                              _updateCreditLimitTable();
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8.0),
-                                      Expanded(
-                                        child: TextFormField(
-                                          readOnly: true,
-                                          controller: TextEditingController(
-                                              text: product['scheduleDate']),
-                                          decoration: InputDecoration(
-                                            labelText: 'Schedule Date*',
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
-                                          ),
-                                          onTap: () async {
-                                            DateTime? pickedDate =
-                                                await showDatePicker(
-                                              context: context,
-                                              initialDate: DateTime.now(),
-                                              firstDate: DateTime.now(),
-                                              lastDate: DateTime(2100),
-                                            );
-                                            if (pickedDate != null) {
-                                              setState(() {
-                                                product['scheduleDate'] =
-                                                    pickedDate
-                                                        .toString()
-                                                        .substring(0, 10);
-                                              });
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8.0),
-                                      Row(
+                              const SizedBox(height: 8.0),
+                              Column(
+                                children: [
+                                  ...productList.asMap().entries.map((entry) {
+                                    int index = entry.key;
+                                    Map<String, dynamic> product = entry.value;
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: Row(
                                         children: [
-                                          ElevatedButton(
+                                          Expanded(
+                                            flex: 20,
+                                            child:
+                                                DropdownButtonFormField<String>(
+                                              value:
+                                                  product['product'] as String?,
+                                              items: (selectedProd1 != null
+                                                      ? productVariants[
+                                                          selectedProd1]!
+                                                      : [])
+                                                  .map((option) =>
+                                                      DropdownMenuItem<String>(
+                                                        value: option,
+                                                        child: Text(option,
+                                                            style: TextStyle(
+                                                                fontSize:
+                                                                    12.0)),
+                                                      ))
+                                                  .toList(),
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  product['product'] = value;
+                                                });
+                                              },
+                                              validator: (value) => value ==
+                                                      null
+                                                  ? 'Please select a product'
+                                                  : null,
+                                              decoration: InputDecoration(
+                                                labelText: 'Product*',
+                                                labelStyle:
+                                                    TextStyle(fontSize: 12.0),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 10.0,
+                                                        horizontal: 8.0),
+                                                constraints: BoxConstraints(
+                                                    maxHeight: 40),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4.0),
+                                          Expanded(
+                                            flex: 5,
+                                            child: TextFormField(
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              enabled:
+                                                  product['product'] != null,
+                                              decoration: InputDecoration(
+                                                labelText: 'Qty (MT)*',
+                                                labelStyle:
+                                                    TextStyle(fontSize: 12.0),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 10.0,
+                                                        horizontal: 8.0),
+                                                constraints: BoxConstraints(
+                                                    maxHeight: 40),
+                                              ),
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  product['qty'] = value;
+                                                  _updateCreditLimitTable();
+                                                });
+                                              },
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Please enter quantity';
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4.0),
+                                          Expanded(
+                                            flex: 10,
+                                            child: TextFormField(
+                                              readOnly: true,
+                                              controller: TextEditingController(
+                                                  text:
+                                                      product['scheduleDate']),
+                                              decoration: InputDecoration(
+                                                labelText: 'Schedule Date*',
+                                                labelStyle:
+                                                    TextStyle(fontSize: 12.0),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 10.0,
+                                                        horizontal: 8.0),
+                                                constraints: BoxConstraints(
+                                                    maxHeight: 40),
+                                              ),
+                                              onTap: () async {
+                                                DateTime? pickedDate =
+                                                    await showDatePicker(
+                                                  context: context,
+                                                  initialDate: DateTime.now(),
+                                                  firstDate: DateTime.now(),
+                                                  lastDate: DateTime(2100),
+                                                );
+                                                if (pickedDate != null) {
+                                                  setState(() {
+                                                    product['scheduleDate'] =
+                                                        pickedDate
+                                                            .toString()
+                                                            .substring(0, 10);
+                                                  });
+                                                }
+                                              },
+                                              validator: (value) =>
+                                                  value == null || value.isEmpty
+                                                      ? 'Please select a date'
+                                                      : null,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4.0),
+                                          Expanded(
+                                            flex: 5,
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                if (productList.length > 1) {
+                                                  setState(() {
+                                                    productList.removeAt(index);
+                                                    _updateCreditLimitTable();
+                                                  });
+                                                }
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.red,
+                                                fixedSize:
+                                                    const Size.fromHeight(40),
+                                                minimumSize: const Size(40,
+                                                    40), // Ensures square size
+                                                padding: EdgeInsets
+                                                    .zero, // Removes extra padding
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0), // Optional: Rounded corners
+                                                ),
+                                              ),
+                                              child: const Icon(Icons.delete,
+                                                  color: Colors.white,
+                                                  size: 18),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 1,
+                                          child: ElevatedButton(
                                             onPressed: () {
                                               setState(() {
-                                                productList.add({
+                                                productList.insert(
+                                                    productList.length - 1, {
                                                   'product': null,
                                                   'qty': null,
                                                   'scheduleDate': null,
@@ -330,45 +412,27 @@ class _OrderEntryState extends State<OrderUpdate> {
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.green,
+                                              fixedSize:
+                                                  const Size.fromHeight(40),
                                             ),
                                             child: const Text(
                                               'Add',
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  fontSize: 14.0,
+                                                  fontSize: 10.0,
                                                   color: Colors.black),
                                             ),
                                           ),
-                                          const SizedBox(width: 8.0),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              if (productList.length > 1) {
-                                                setState(() {
-                                                  productList.removeAt(index);
-                                                  _updateCreditLimitTable();
-                                                });
-                                              }
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.red,
-                                            ),
-                                            child: const Text(
-                                              'Delete',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14.0,
-                                                  color: Colors.black),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                );
-                              }).toList(),
+                                ],
+                              ),
                             ],
                           ),
                         ),
+
                         // Remarks Section
                         _buildCard(
                           isSmallScreen,
@@ -378,18 +442,21 @@ class _OrderEntryState extends State<OrderUpdate> {
                               TextFormField(
                                 decoration: InputDecoration(
                                   labelText: 'Order Remarks',
+                                  labelStyle: TextStyle(fontSize: 12.0),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 4.0),
                                 ),
                               ),
-                              const SizedBox(height: 16.0),
+                              const SizedBox(height: 8.0),
                               Center(
                                   child: ElevatedButton(
                                 onPressed: _handleSubmit,
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0, vertical: 15.0),
+                                      horizontal: 10.0, vertical: 5.0),
                                   backgroundColor: Colors.blue,
                                 ),
                                 child: const Text(
@@ -417,11 +484,11 @@ class _OrderEntryState extends State<OrderUpdate> {
 
   Widget _buildCard(bool isSmallScreen, {required Widget child}) {
     return Card(
-      margin: EdgeInsets.all(isSmallScreen ? 8.0 : 16.0),
+      margin: EdgeInsets.all(isSmallScreen ? 5.0 : 10.0),
       elevation: 4.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       child: Padding(
-        padding: EdgeInsets.all(isSmallScreen ? 8.0 : 16.0),
+        padding: EdgeInsets.all(isSmallScreen ? 5.0 : 10.0),
         child: child,
       ),
     );
@@ -440,12 +507,20 @@ class _OrderEntryState extends State<OrderUpdate> {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        labelStyle: const TextStyle(fontSize: 12),
         border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(
+            horizontal: 8, vertical: 4), // Adjust padding
       ),
       value: dropdownValue,
+      style: const TextStyle(fontSize: 12, color: Colors.black),
       items: options
-          .map((option) => DropdownMenuItem(value: option, child: Text(option)))
+          .map((option) => DropdownMenuItem(
+                value: option,
+                child: Text(option,
+                    style: const TextStyle(
+                        fontSize: 14)), // Dropdown items size 14
+              ))
           .toList(),
       onChanged: (value) {
         if (label == 'Product') {
@@ -580,11 +655,12 @@ class _OrderEntryState extends State<OrderUpdate> {
               global_state.productList = List.from(productList);
 
               // Delay showing the SnackBar to ensure dialog has closed
-              Future.delayed(Duration(milliseconds: 100), () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Order Submitted!')),
-                );
-              });
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ManageOrderPage(),
+                ),
+              );
               setState(() {
                 // Reset product list, you can adjust this to your needs
                 productList = [
@@ -614,9 +690,9 @@ class _OrderEntryState extends State<OrderUpdate> {
         children: [
           const Text(
             'Purchaser Details',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 8.0),
           _buildTable(tableData2),
         ],
       ),
@@ -631,37 +707,41 @@ class _OrderEntryState extends State<OrderUpdate> {
         children: [
           const Text(
             'Credit Limit',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 8.0),
           _buildTable(tableData1),
         ],
       ),
     );
   }
 
-  Widget _buildTable(List<Map<String, String>> tableData) {
-    return DataTable(
-      border: TableBorder.all(
-        color: Colors.grey.shade400,
-        width: 1.0,
-      ),
-      columns: tableData.first.keys
-          .map((key) => DataColumn(
-                label: Text(
-                  key,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 14.0),
-                ),
-              ))
+  Widget _buildTable(List<Map<String, String>> data) {
+    return Table(
+      columnWidths: const {
+        0: FlexColumnWidth(1),
+        1: FlexColumnWidth(1),
+      },
+      border: TableBorder.all(color: Colors.grey),
+      children: data
+          .map(
+            (row) => TableRow(
+              children: row.values
+                  .map(
+                    (value) => Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 2),
+                      child: Text(
+                        value,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 12.0),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          )
           .toList(),
-      rows: tableData.map((row) {
-        return DataRow(
-          cells: row.entries.map((entry) {
-            return DataCell(Text(entry.value));
-          }).toList(),
-        );
-      }).toList(),
     );
   }
 
@@ -708,7 +788,7 @@ class _OrderEntryState extends State<OrderUpdate> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        const SizedBox(width: 8.0),
+        const SizedBox(width: 2.0),
         Text(label),
       ],
     );

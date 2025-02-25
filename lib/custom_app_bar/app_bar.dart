@@ -15,8 +15,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   _CustomAppBarState createState() => _CustomAppBarState();
 
   @override
-  Size get preferredSize =>
-      const Size.fromHeight(120); // Adjust height dynamically
+  Size get preferredSize => const Size.fromHeight(110);
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
@@ -25,29 +24,29 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    double appBarHeight = isSearchActive ? 110 : 55;
 
-    return Stack(
-      children: [
-        Container(
-          height: isSearchActive ? 120 : 90, // Ensure AppBar adjusts height
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.blue[800]!,
-                Colors.blueAccent,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      height: appBarHeight,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.blue[800]!,
+            Colors.blueAccent,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        Column(
+      ),
+      child: SingleChildScrollView(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
-              toolbarHeight: 60,
+              toolbarHeight: 55,
               automaticallyImplyLeading: false,
               title: Row(
                 children: [
@@ -131,22 +130,23 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
               ],
             ),
+            if (isSearchActive)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                child: SizedBox(
+                  height: 40,
+                  child: SearchBarWidget(
+                    onClose: () {
+                      setState(() {
+                        isSearchActive = false;
+                      });
+                    },
+                  ),
+                ),
+              ),
           ],
         ),
-        if (isSearchActive)
-          Positioned(
-            top: 86, // Ensure it appears below the AppBar
-            left: 0,
-            right: 0,
-            child: SearchBarWidget(
-              onClose: () {
-                setState(() {
-                  isSearchActive = false;
-                });
-              },
-            ),
-          ),
-      ],
+      ),
     );
   }
 

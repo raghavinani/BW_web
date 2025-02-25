@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           // Main content
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.blueAccent,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 SizedBox(
                   height: 40,
                   child: TextField(
@@ -62,21 +62,21 @@ class _HomePageState extends State<HomePage> {
                         fontSize: 16), // Adjust text size inside the field
                     decoration: const InputDecoration(
                       labelText: 'Token Number',
-                      labelStyle: TextStyle(fontSize: 16), // Label size
+                      labelStyle: TextStyle(fontSize: 12), // Label size
                       border: OutlineInputBorder(),
                       contentPadding: EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 12), // Adjust padding
+                          vertical: 4, horizontal: 8), // Adjust padding
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
                 Center(
                   child: SizedBox(
-                    width: 200,
+                    width: 150,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue[900], // Dark blue shade
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 4),
                       ),
                       onPressed: () async {
                         final scannedValue = await Navigator.of(context).push(
@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -120,6 +120,7 @@ class QrCodeScannerPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 50,
         title: const Text('Scanning...'),
       ),
       body: Stack(
@@ -141,8 +142,8 @@ class QrCodeScannerPage extends StatelessWidget {
           ),
           Center(
             child: Container(
-              width: 500,
-              height: 500,
+              width: 200,
+              height: 200,
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.green, width: 3),
                 borderRadius: BorderRadius.circular(8),

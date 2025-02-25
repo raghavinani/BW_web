@@ -7,6 +7,7 @@ import 'package:login/carousel.dart';
 import 'package:login/bottom_nav_bar_mobile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:login/view_orders.dart';
+import 'package:login/loginBanner.dart';
 
 void main() {
   runApp(const ContentPage());
@@ -121,7 +122,7 @@ class HomeBase extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(),
+                // _buildHeader(),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
@@ -148,6 +149,10 @@ class HomeBase extends StatelessWidget {
               ],
             ),
           ),
+
+          // Banner Overlay
+          const LoginBanner(),
+
           // Floating Bottom Navigation Bar
           if (isMobile)
             Positioned(
@@ -168,20 +173,20 @@ class HomeBase extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      height: 40,
-      padding: const EdgeInsets.all(AppConfig.boxPadding),
-      color: Colors.blue.shade50,
-      child: const Center(
-        child: Text(
-          'Birla White',
-          style: TextStyle(
-              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-        ),
-      ),
-    );
-  }
+  // Widget _buildHeader() {
+  //   return Container(
+  //     height: 40,
+  //     padding: const EdgeInsets.all(AppConfig.boxPadding),
+  //     color: Colors.blue.shade50,
+  //     child: const Center(
+  //       child: Text(
+  //         'Birla White',
+  //         style: TextStyle(
+  //             fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildBoxesLayout(bool isMobile, bool isSmallScreen,
       double screenWidth, double screenHeight) {
