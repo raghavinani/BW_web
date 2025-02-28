@@ -372,7 +372,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
         Text(label, style: const TextStyle(fontSize: 12)),
         const SizedBox(height: 2),
         SizedBox(
-          height: 40,
+          height: 50,
           child: TextFormField(
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
@@ -400,7 +400,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
         Text(label, style: const TextStyle(fontSize: 12)),
         const SizedBox(height: 2),
         SizedBox(
-          height: 40,
+          height: 50,
           child: DropdownButtonFormField<String>(
             style: const TextStyle(fontSize: 12, color: Colors.black),
             dropdownColor: Colors.blue.shade100,
@@ -519,7 +519,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
         Text(label, style: const TextStyle(fontSize: 12)),
         const SizedBox(height: 2),
         SizedBox(
-          height: 40,
+          height: 50,
           child: TextFormField(
             initialValue: value,
             enabled: false,

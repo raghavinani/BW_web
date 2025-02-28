@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:login/splash_screen.dart';
 import 'package:login/login.dart';
 import 'package:login/register.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:shared_preferences_web/shared_preferences_web.dart';
-// import 'package:hive/hive.dart';
-// import 'package:hive_flutter/hive_flutter.dart';
+// import 'package:login/login_otp.dart';
 
-void main() async {
-  // await Hive.initFlutter();
-  WidgetsFlutterBinding
-      .ensureInitialized(); // Ensure Flutter is ready before using async functions
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: MyLogin(),
+    home: SplashScreen(),
     routes: {
-      'register': (context) => MyRegister(),
       'login': (context) => MyLogin(),
+      'register': (context) => MyRegister(),
+      // 'login_otp': (context) => LoginWithOTP(),
     },
   ));
 }

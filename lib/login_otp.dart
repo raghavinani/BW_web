@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:login/content.dart';
-import 'package:login/login_otp.dart';
-import 'secure_storage.dart';
+import 'package:login/login.dart';
 
-class MyLogin extends StatefulWidget {
-  const MyLogin({super.key});
+class LoginWithOtp extends StatefulWidget {
+  const LoginWithOtp({super.key});
 
   @override
-  _MyLoginState createState() => _MyLoginState();
+  _LoginWithOtpState createState() => _LoginWithOtpState();
 }
 
-class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
-  bool isChecked = false;
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
-  final SecureStorage secureStorage = SecureStorage();
-  String? errorMessage;
+class _LoginWithOtpState extends State<LoginWithOtp>
+    with SingleTickerProviderStateMixin {
+  TextEditingController mobileController = TextEditingController();
+  TextEditingController otpController = TextEditingController();
   late AnimationController _animationController;
   late Animation<Offset> _animation;
 
@@ -34,37 +30,6 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
       curve: Curves.easeOut,
     ));
     _animationController.forward();
-    getStoredData();
-  }
-
-  void getStoredData() async {
-    final storedEmail = await secureStorage.readData('email');
-    final storedPassword = await secureStorage.readData('password');
-    if (storedEmail != null && storedPassword != null) {
-      email.text = storedEmail;
-      password.text = storedPassword;
-      isChecked = true;
-      setState(() {});
-    }
-  }
-
-  void login() async {
-    final storedEmail = await secureStorage.readData('email');
-    final storedPassword = await secureStorage.readData('password');
-    if (email.text == storedEmail && password.text == storedPassword) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ContentPage()),
-      );
-    } else {
-      setState(() {
-        errorMessage = "Invalid email or password";
-      });
-    }
-    if (isChecked) {
-      await secureStorage.saveData('email', email.text);
-      await secureStorage.saveData('password', password.text);
-    }
   }
 
   @override
@@ -75,7 +40,7 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
           Positioned.fill(
             child: Image.asset(
               "assets/login.png",
-              fit: BoxFit.fill, // Covers the entire screen
+              fit: BoxFit.fill,
             ),
           ),
           Column(
@@ -110,7 +75,7 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 20),
                     decoration: BoxDecoration(
-                      color: Colors.white70,
+                      color: Colors.white,
                       borderRadius:
                           const BorderRadius.vertical(top: Radius.circular(40)),
                       boxShadow: [
@@ -125,73 +90,52 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const Text(
-                          'Log In',
+                          'Log In Mobile No.',
                           style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.black),
                         ),
                         const SizedBox(height: 20),
-                        if (errorMessage !=
-                            null) // Show error message if present
-                          Text(
-                            errorMessage!,
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        const SizedBox(height: 10),
                         TextField(
-                          controller: email,
+                          controller: mobileController,
+                          keyboardType: TextInputType.phone,
                           style: const TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                             fillColor: Colors.grey.shade100,
                             filled: true,
-                            hintText: "Username",
+                            hintText: "Enter no",
                             hintStyle: const TextStyle(color: Colors.blue),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 15),
-                        TextField(
-                          controller: password,
-                          obscureText: true,
-                          style: const TextStyle(color: Colors.black),
-                          decoration: InputDecoration(
-                            fillColor: Colors.grey.shade100,
-                            filled: true,
-                            hintText: "Password",
-                            hintStyle: const TextStyle(color: Colors.blue),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
+                        // const SizedBox(height: 10),
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
                             onPressed: () {},
-                            child: const Text("Forgot Password?",
+                            child: const Text("Sent OTP",
                                 style: TextStyle(color: Colors.blue)),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Checkbox(
-                              value: isChecked,
-                              onChanged: (value) {
-                                setState(() {
-                                  isChecked = value ?? false;
-                                });
-                              },
-                            ),
-                            const Text("Remember Me",
-                                style: TextStyle(color: Colors.black)),
-                          ],
-                        ),
                         const SizedBox(height: 10),
+                        TextField(
+                          controller: otpController,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            fillColor: Colors.grey.shade100,
+                            filled: true,
+                            hintText: "Enter OTP",
+                            hintStyle: const TextStyle(color: Colors.blue),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 30),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
@@ -199,23 +143,40 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
                             padding: const EdgeInsets.symmetric(
                                 vertical: 12, horizontal: 50),
                           ),
-                          onPressed: login,
-                          child: const Text("Log In",
+                          onPressed: () {},
+                          child: const Text("Verify Now",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 18)),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 20), // Space between buttons
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const LoginWithOtp()),
+                                  builder: (context) => MyLogin()),
                             );
                           },
-                          child: const Text("Log in With Otp",
-                              style:
-                                  TextStyle(color: Colors.blue, fontSize: 18)),
+                          style: TextButton.styleFrom(
+                              padding:
+                                  EdgeInsets.zero), // Removes default padding
+                          child: const Row(
+                            mainAxisSize: MainAxisSize
+                                .min, // Keeps size minimal to remove gaps
+                            children: [
+                              Icon(Icons.arrow_back,
+                                  color: Colors.black, size: 18),
+                              Text(
+                                "Go back",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  decoration: TextDecoration
+                                      .underline, // Underline text
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

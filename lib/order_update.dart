@@ -55,8 +55,6 @@ class _OrderEntryState extends State<OrderUpdate> {
       'White Cement - 10kg',
       'White Cement - 50kg',
       'White Cement - 100kg',
-      'White Cement - 500kg',
-      'White Cement - 1000kg',
     ],
     'WaterProof Putty': [
       'WaterProof Putty - 1kg',
