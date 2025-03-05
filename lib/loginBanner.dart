@@ -41,6 +41,10 @@ class _LoginBannerState extends State<LoginBanner> {
     }
   }
 
+  void closeBanner() {
+    setState(() => showBanner = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!showBanner) return const SizedBox.shrink();
@@ -53,25 +57,46 @@ class _LoginBannerState extends State<LoginBanner> {
         // Blurred Background
         Positioned.fill(
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5), // Blur effect
-            child: Container(
-              color: Colors.black.withOpacity(0.3), // Dark overlay for contrast
-            ),
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Container(color: Colors.black.withOpacity(0.3)),
           ),
         ),
 
         // Centered Banner
         Center(
-          child: Container(
-            width: screenWidth * 0.8,
-            height: screenHeight * 0.6,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              image: const DecorationImage(
-                image: AssetImage('assets/carousel/index_0.jpg'),
-                fit: BoxFit.fill,
+          child: Stack(
+            children: [
+              Container(
+                width: screenWidth * 0.8,
+                height: screenHeight * 0.6,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  image: const DecorationImage(
+                    image: AssetImage('assets/carousel/index_0.jpg'),
+                    fit: BoxFit.fill,
+                  ),
+                ),
               ),
-            ),
+
+              // Close Button
+              Positioned(
+                top: 4,
+                right: 4,
+                child: GestureDetector(
+                  onTap: closeBanner,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      border: Border.all(color: Colors.black, width: 2),
+                    ),
+                    child:
+                        const Icon(Icons.close, color: Colors.black, size: 16),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],

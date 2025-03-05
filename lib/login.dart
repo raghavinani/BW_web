@@ -101,7 +101,7 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
                       fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               Expanded(
                 child: SlideTransition(
                   position: _animation,
@@ -177,10 +177,12 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
                           ),
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          // mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Checkbox(
                               value: isChecked,
+                              visualDensity: VisualDensity.compact,
                               onChanged: (value) {
                                 setState(() {
                                   isChecked = value ?? false;
@@ -191,7 +193,7 @@ class _MyLoginState extends State<MyLogin> with SingleTickerProviderStateMixin {
                                 style: TextStyle(color: Colors.black)),
                           ],
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 20),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,

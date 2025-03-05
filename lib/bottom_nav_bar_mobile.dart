@@ -92,12 +92,12 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.menu,
+                          Icons.person_2_outlined,
                           color: tappedIndex == 1 ? Colors.blue : Colors.black,
                           size: 21.0,
                         ),
                         Text(
-                          'Menu',
+                          'Profile',
                           style: TextStyle(
                             color:
                                 tappedIndex == 1 ? Colors.blue : Colors.black,

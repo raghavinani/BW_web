@@ -15,7 +15,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   _CustomAppBarState createState() => _CustomAppBarState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(110);
+  Size get preferredSize => const Size.fromHeight(100);
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
@@ -24,20 +24,21 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    double appBarHeight = isSearchActive ? 110 : 55;
+    double appBarHeight = isSearchActive ? 100 : 50;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       height: appBarHeight,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.blue[800]!,
-            Colors.blueAccent,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Colors.white,
+        // gradient: LinearGradient(
+        //   colors: [
+        //     Colors.blue[800]!,
+        //     Colors.blueAccent,
+        //   ],
+        //   begin: Alignment.topLeft,
+        //   end: Alignment.bottomRight,
+        // ),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -46,26 +47,34 @@ class _CustomAppBarState extends State<CustomAppBar> {
             AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
-              toolbarHeight: 55,
+              toolbarHeight: 50,
               automaticallyImplyLeading: false,
               title: Row(
                 children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ContentPage()),
-                        );
-                      },
-                      child: Image.asset(
-                        'assets/logo.jpeg',
-                        height: 30,
-                        width: 60,
-                        fit: BoxFit.cover,
+                  GestureDetector(
+                    onTap: () => Scaffold.of(context).openDrawer(),
+                    child: const Icon(Icons.menu, color: Colors.black),
+                  ),
+                  Container(
+                    height: 25,
+                    width: 1.5,
+                    color: Colors.grey,
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ContentPage()),
+                      );
+                    },
+                    child: const Text(
+                      "SPARSH",
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -86,48 +95,45 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ],
               ),
               actions: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: IconButton(
-                    iconSize: 21,
-                    icon: const Icon(Icons.search, color: Colors.white),
-                    onPressed: () {
-                      setState(() {
-                        isSearchActive = !isSearchActive;
-                      });
-                    },
-                  ),
-                ),
                 IconButton(
-                  iconSize: 21,
-                  icon: const Icon(Icons.notifications, color: Colors.white),
+                  icon: const Icon(Icons.notifications_active_outlined,
+                      color: Colors.black),
                   onPressed: () {},
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: IconButton(
-                    iconSize: 30,
-                    icon: const CircleAvatar(
-                      radius: 20,
-                      backgroundImage: AssetImage('assets/profile_image.png'),
-                    ),
-                    onPressed: () {
-                      final isMobile = Theme.of(context).platform ==
-                              TargetPlatform.iOS ||
-                          Theme.of(context).platform == TargetPlatform.android;
-
-                      if (isMobile) {
-                        Scaffold.of(context).openEndDrawer();
-                      } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ProfilePage()),
-                        );
-                      }
-                    },
-                  ),
+                IconButton(
+                  icon: const Icon(Icons.search, color: Colors.black),
+                  onPressed: () {
+                    setState(() {
+                      isSearchActive = !isSearchActive;
+                    });
+                  },
                 ),
+
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 2),
+                //   child: IconButton(
+                //     iconSize: 30,
+                //     icon: const CircleAvatar(
+                //       radius: 20,
+                //       backgroundImage: AssetImage('assets/profile_image.png'),
+                //     ),
+                //     onPressed: () {
+                //       final isMobile = Theme.of(context).platform ==
+                //               TargetPlatform.iOS ||
+                //           Theme.of(context).platform == TargetPlatform.android;
+
+                //       if (isMobile) {
+                //         Scaffold.of(context).openEndDrawer();
+                //       } else {
+                //         Navigator.push(
+                //           context,
+                //           MaterialPageRoute(
+                //               builder: (context) => const ProfilePage()),
+                //         );
+                //       }
+                //     },
+                //   ),
+                // ),
               ],
             ),
             if (isSearchActive)
@@ -135,13 +141,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
                 child: SizedBox(
                   height: 40,
-                  child: SearchBarWidget(
-                    onClose: () {
-                      setState(() {
-                        isSearchActive = false;
-                      });
-                    },
-                  ),
+                  child: SearchBarWidget(),
                 ),
               ),
           ],

@@ -89,7 +89,7 @@ class ManageOrderPage extends StatelessWidget {
 
                   return Container(
                     margin:
-                        const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Colors.deepPurple, // Border color

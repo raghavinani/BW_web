@@ -66,7 +66,7 @@ class _LoginWithOtpState extends State<LoginWithOtp>
                       fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               Expanded(
                 child: SlideTransition(
                   position: _animation,
