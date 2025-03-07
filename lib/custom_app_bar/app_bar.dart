@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login/QR_scanner.dart';
 import 'package:login/order_entry.dart';
-import 'package:login/profile_page.dart';
+// import 'package:login/profile_page.dart';
 import 'package:login/RetailerEntry.dart';
 import 'package:login/content.dart';
 import 'package:login/order_update.dart';
@@ -161,7 +161,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         padding: const EdgeInsets.symmetric(horizontal: 4.0),
         child: Text(
           title,
-          style: const TextStyle(color: Colors.white, fontSize: 12),
+          style: const TextStyle(color: Colors.black, fontSize: 12),
         ),
       ),
       onSelected: (value) {

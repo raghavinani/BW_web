@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:login/custom_app_bar/profile_sidebar.dart';
 import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/custom_app_bar/app_bar.dart';
+import 'package:login/content.dart';
 
 void main() {
   runApp(const RetailerRegistrationApp());
@@ -76,7 +77,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
                       _uploadedFileName!.endsWith('.jpeg')
                   ? Image.memory(
                       _fileBytes!,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     )
                   : Center(
                       child: const Text(
@@ -97,13 +98,13 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
             child: Container(
               padding: const EdgeInsets.all(16.0),
               width: 300,
-              height: 400,
+              height: 500,
               child: _filePath!.endsWith('.jpg') ||
                       _filePath!.endsWith('.png') ||
                       _filePath!.endsWith('.jpeg')
                   ? Image.file(
                       io.File(_filePath!),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     )
                   : Center(
                       child: const Text(
@@ -129,65 +130,89 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
           final isWideScreen = MediaQuery.of(context).size.width > 1080;
 
           return SingleChildScrollView(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Retailer Registration',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
-                      ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(
+                          0, 112, 183, 1), // Background color
+                      // borderRadius: BorderRadius.circular(8),
                     ),
-                    const SizedBox(height: 8.0),
-                    isWideScreen
-                        ? Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(child: _buildBasicDetailsForm()),
-                              const SizedBox(width: 8.0),
-                              Expanded(child: _buildContactDetailsForm()),
-                            ],
-                          )
-                        : Column(
-                            children: [
-                              _buildBasicDetailsForm(),
-                              const SizedBox(height: 16.0),
-                              _buildContactDetailsForm(),
-                            ],
-                          ),
-                    const SizedBox(height: 24.0),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Form Submitted Successfully!')),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 16),
-                          backgroundColor: Colors.blueAccent,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon:
+                              const Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () {
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const ContentPage()),
+                              );
+                            }
+                          },
                         ),
-                        child: const Text('Submit',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white)),
-                      ),
+                        const SizedBox(
+                            width: 8), // Spacing between icon and text
+                        const Text(
+                          'Retailer Registration',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white, // White text color
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  isWideScreen
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: _buildBasicDetailsForm()),
+                            const SizedBox(width: 8.0),
+                            Expanded(child: _buildContactDetailsForm()),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            _buildBasicDetailsForm(),
+                            const SizedBox(height: 16.0),
+                            _buildContactDetailsForm(),
+                          ],
+                        ),
+                  const SizedBox(height: 16.0),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Form Submitted Successfully!')),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 8),
+                        backgroundColor: Colors.blueAccent,
+                      ),
+                      child: const Text('Submit',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white)),
+                    ),
+                  ),
+                ],
               ),
             ),
           );
@@ -218,72 +243,25 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
+              color: Color.fromRGBO(0, 112, 183, 1),
             ),
           ),
           const SizedBox(height: 8.0),
-          Row(
-            children: [
-              Expanded(
-                child: _buildDropdownField('Process Type*', ['Add', 'Update']),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildDropdownField(
-                    'Retailer Category*', ['Urban', 'Rural', 'Direct Dealer']),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child:
-                    _buildDropdownField('Area*', ['Rajasthan', 'Maharashtra']),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildDropdownField('District*', ['Jaipur', 'Mumbai']),
-              ),
-            ],
-          ),
-          _buildClickableOptions(
-              'Register With PAN/GST*', ['With GST', 'With PAN']),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField('GST Number*'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildTextField('PAN Number*'),
-              ),
-            ],
-          ),
+          _buildDropdownField('Process Type*', ['Add', 'Update']),
+          _buildDropdownField(
+              'Retailer Category*', ['Urban', 'Rural', 'Direct Dealer']),
+          _buildDropdownField('Area*', ['Rajasthan', 'Maharashtra']),
+          _buildDropdownField('District*', ['Jaipur', 'Mumbai']),
+          _buildClickableOptions('Register With PAN/GST*', ['GST', 'PAN']),
+          _buildTextField('GST Number*'),
+          _buildTextField('PAN Number*'),
           _buildTextField('Firm Name*'),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField('Mobile*'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildTextField('Office Telephone'),
-              ),
-            ],
-          ),
+          _buildTextField('Mobile*'),
+          _buildTextField('Office Telephone'),
           _buildTextField('Email'),
           _buildTextField('Address 1*'),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField('Address 2'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildTextField('Address 3'),
-              ),
-            ],
-          ),
+          _buildTextField('Address 2'),
+          _buildTextField('Address 3'),
         ],
       ),
     );
@@ -311,54 +289,18 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
+              color: Color.fromRGBO(0, 112, 183, 1),
             ),
           ),
           const SizedBox(height: 8.0),
-          Row(
-            children: [
-              Expanded(
-                child: _buildPredefinedField('Stockist Code*', '4401S711'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildTextField('Tally Retailer Code'),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField('Concern Employee*'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildUploadField('Retailer Profile Image'),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: _buildUploadField('PAN / GST No Image Upload / View'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildDropdownField('Scheme Required*', ['Yes', 'No']),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField('Aadhar Card No*'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildUploadField('Aadhar Card Upload'),
-              ),
-            ],
-          ),
+          _buildPredefinedField('Stockist Code*', '4401S711'),
+          _buildTextField('Tally Retailer Code'),
+          _buildTextField('Concern Employee*'),
+          _buildUploadField('Retailer Profile Image'),
+          _buildUploadField('PAN / GST No Image Upload / View'),
+          _buildDropdownField('Scheme Required*', ['Yes', 'No']),
+          _buildTextField('Aadhar Card No*'),
+          _buildUploadField('Aadhar Card Upload'),
           _buildTextField('Proprietor / Partner Name*'),
         ],
       ),
@@ -369,13 +311,15 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12)),
+        Text(label,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
         const SizedBox(height: 2),
         SizedBox(
-          height: 50,
+          height: 40,
           child: TextFormField(
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(left: 8),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -388,7 +332,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
             },
           ),
         ),
-        const SizedBox(height: 8.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -397,13 +341,13 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12)),
+        Text(label, style: const TextStyle(fontSize: 14)),
         const SizedBox(height: 2),
         SizedBox(
-          height: 50,
+          height: 40,
           child: DropdownButtonFormField<String>(
             style: const TextStyle(fontSize: 12, color: Colors.black),
-            dropdownColor: Colors.blue.shade100,
+            dropdownColor: Colors.white,
             items: items
                 .map((item) => DropdownMenuItem<String>(
                       value: item,
@@ -414,6 +358,9 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
                 .toList(),
             onChanged: (value) {},
             decoration: InputDecoration(
+              contentPadding:
+                  EdgeInsets.only(left: 8), // Removes default padding
+              // isDense: true, // Reduces height
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -426,7 +373,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
             },
           ),
         ),
-        const SizedBox(height: 8.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -435,10 +382,11 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12)),
-        const SizedBox(height: 4.0),
+        Text(label, style: const TextStyle(fontSize: 14)),
+        const SizedBox(height: 2.0),
         Wrap(
-          spacing: 4.0,
+          spacing: 8.0, // Adjust spacing between chips if needed
+          runSpacing: 8.0, // Adjust spacing between rows if needed
           children: options.map((option) {
             final isSelected = _selectedOption == option;
             return ChoiceChip(
@@ -449,15 +397,21 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
                   _selectedOption = selected ? option : null;
                 });
               },
-              labelStyle: TextStyle(
-                color: isSelected ? Colors.white : Colors.blueAccent,
+              labelStyle: const TextStyle(color: Colors.white),
+              backgroundColor: const Color.fromRGBO(0, 112, 183, 1),
+              selectedColor: const Color.fromRGBO(0, 112, 183, 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0), // Circular shape
+                side: BorderSide(
+                  color: isSelected
+                      ? Colors.white
+                      : Colors.transparent, // Optional border
+                ),
               ),
-              backgroundColor: Colors.blue[100],
-              selectedColor: Colors.blueAccent,
             );
           }).toList(),
         ),
-        const SizedBox(height: 8.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -466,48 +420,56 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12)),
-        const SizedBox(height: 2),
+        Text(label, style: const TextStyle(fontSize: 14)),
+        const SizedBox(height: 4),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              height: 30,
-              width: 60,
-              child: ElevatedButton(
+              height: 40,
+              width: 120, // Increased width for better spacing
+              child: ElevatedButton.icon(
                 onPressed: _pickFile,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: EdgeInsets.zero,
-                ),
-                child: const Text('Upload',
+                icon: const Icon(Icons.file_upload,
+                    size: 18, color: Colors.white),
+                label: const Text('Upload',
                     style: TextStyle(fontSize: 14, color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(0, 112, 183, 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(4.0), // Rectangular shape
+                  ),
+                ),
               ),
             ),
+            const SizedBox(width: 16),
             SizedBox(
-              height: 30,
-              width: 60,
-              child: ElevatedButton(
+              height: 40,
+              width: 120,
+              child: ElevatedButton.icon(
                 onPressed: _uploadedFileName != null ? _viewFile : null,
+                icon: const Icon(Icons.remove_red_eye_outlined,
+                    size: 18, color: Colors.white),
+                label: const Text('View',
+                    style: TextStyle(fontSize: 14, color: Colors.white)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   padding: EdgeInsets.zero,
                 ),
-                child: const Text('View',
-                    style: TextStyle(fontSize: 14, color: Colors.white)),
               ),
             ),
           ],
         ),
         if (_uploadedFileName != null)
           Padding(
-            padding: const EdgeInsets.only(top: 4.0),
+            padding: const EdgeInsets.only(top: 2.0),
             child: Text(
               'Uploaded File: ${_uploadedFileName!.split('/').last}',
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ),
-        const SizedBox(height: 8.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -516,22 +478,23 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12)),
+        Text(label, style: const TextStyle(fontSize: 14)),
         const SizedBox(height: 2),
         SizedBox(
-          height: 50,
+          height: 40,
           child: TextFormField(
             initialValue: value,
             enabled: false,
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(left: 8),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 8.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
