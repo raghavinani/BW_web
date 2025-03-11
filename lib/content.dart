@@ -8,6 +8,7 @@ import 'package:login/bottom_nav_bar_mobile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:login/view_orders.dart';
 import 'package:login/loginBanner.dart';
+import 'package:login/DSR.dart';
 
 void main() {
   runApp(const ContentPage());
@@ -134,7 +135,7 @@ class HomeBase extends StatelessWidget {
                               horizontal: AppConfig.boxPadding),
                           child: const CustomCarousel(),
                         ),
-                        _buildHorizontalQuickMenu(),
+                        _buildQuickMenu(),
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: AppConfig.boxPadding * 2,
@@ -328,7 +329,7 @@ class HomeBase extends StatelessWidget {
     );
   }
 
-  Widget _buildHorizontalQuickMenu() {
+  Widget _buildQuickMenu() {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
@@ -407,6 +408,11 @@ class HomeBase extends StatelessWidget {
         context,
         MaterialPageRoute(builder: (context) => const ManageOrderPage()),
       );
+    } else if (label == 'DSR') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const DSR()),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('$label clicked')),
@@ -418,7 +424,7 @@ class HomeBase extends StatelessWidget {
 final List<Map<String, dynamic>> _quickMenuItems = [
   {'icon': Icons.app_registration, 'label': 'Retailer Registration'},
   {'icon': Icons.history, 'label': 'Order History'},
-  {'icon': Icons.bar_chart, 'label': 'Sales Report'},
+  {'icon': Icons.bar_chart, 'label': 'DSR'},
   {'icon': Icons.inventory, 'label': 'Inventory'},
   {'icon': Icons.settings, 'label': 'Settings'},
   {'icon': Icons.help, 'label': 'Help Center'},

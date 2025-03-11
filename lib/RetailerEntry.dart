@@ -121,102 +121,102 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isWideScreen = MediaQuery.of(context).size.width > 1080;
     return Scaffold(
       appBar: CustomAppBar(),
       drawer: CustomSidebar(),
       endDrawer: const ProfileSidebar(),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isWideScreen = MediaQuery.of(context).size.width > 1080;
-
-          return SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(
-                          0, 112, 183, 1), // Background color
-                      // borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon:
-                              const Icon(Icons.arrow_back, color: Colors.white),
-                          onPressed: () {
-                            if (Navigator.canPop(context)) {
-                              Navigator.pop(context);
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const ContentPage()),
-                              );
-                            }
-                          },
-                        ),
-                        const SizedBox(
-                            width: 8), // Spacing between icon and text
-                        const Text(
-                          'Retailer Registration',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white, // White text color
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color.fromRGBO(0, 112, 183, 1), // Background color
+            ),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ContentPage()),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(width: 8), // Spacing between icon and text
+                const Text(
+                  'Retailer Registration',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white, // White text color
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          // The form below will be scrollable
+          Expanded(
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    isWideScreen
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: _buildBasicDetailsForm()),
+                              const SizedBox(width: 8.0),
+                              Expanded(child: _buildContactDetailsForm()),
+                            ],
+                          )
+                        : Column(
+                            children: [
+                              _buildBasicDetailsForm(),
+                              const SizedBox(height: 16.0),
+                              _buildContactDetailsForm(),
+                            ],
                           ),
+                    const SizedBox(height: 16.0),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Form Submitted Successfully!')),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 8),
+                          backgroundColor: Colors.blueAccent,
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  isWideScreen
-                      ? Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(child: _buildBasicDetailsForm()),
-                            const SizedBox(width: 8.0),
-                            Expanded(child: _buildContactDetailsForm()),
-                          ],
-                        )
-                      : Column(
-                          children: [
-                            _buildBasicDetailsForm(),
-                            const SizedBox(height: 16.0),
-                            _buildContactDetailsForm(),
-                          ],
-                        ),
-                  const SizedBox(height: 16.0),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Form Submitted Successfully!')),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 8),
-                        backgroundColor: Colors.blueAccent,
+                        child: const Text('Submit',
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white)),
                       ),
-                      child: const Text('Submit',
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white)),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 16.0)
+                  ],
+                ),
               ),
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
