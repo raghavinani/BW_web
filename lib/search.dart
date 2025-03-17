@@ -4,6 +4,7 @@ import 'package:login/RetailerEntry.dart';
 import 'package:login/QR_scanner.dart';
 import 'package:login/order_entry.dart';
 import 'package:login/order_update.dart';
+import 'package:login/sales_summary.dart';
 import 'package:login/view_orders.dart';
 
 class SearchBarWidget extends StatefulWidget {
@@ -66,6 +67,11 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const OrderEntry()),
+      );
+    } else if (value == 'Sales Report') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SalesSummaryPage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

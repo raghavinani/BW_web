@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:login/view_orders.dart';
 import 'package:login/loginBanner.dart';
 import 'package:login/DSR.dart';
+import 'package:login/sales_summary.dart';
 
 void main() {
   runApp(const ContentPage());
@@ -173,21 +174,6 @@ class HomeBase extends StatelessWidget {
       ),
     );
   }
-
-  // Widget _buildHeader() {
-  //   return Container(
-  //     height: 40,
-  //     padding: const EdgeInsets.all(AppConfig.boxPadding),
-  //     color: Colors.blue.shade50,
-  //     child: const Center(
-  //       child: Text(
-  //         'Birla White',
-  //         style: TextStyle(
-  //             fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildBoxesLayout(bool isMobile, bool isSmallScreen,
       double screenWidth, double screenHeight) {
@@ -413,6 +399,11 @@ class HomeBase extends StatelessWidget {
         context,
         MaterialPageRoute(builder: (context) => const DSR()),
       );
+    } else if (label == 'Sales Summary') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const SalesSummaryPage()),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('$label clicked')),
@@ -427,7 +418,7 @@ final List<Map<String, dynamic>> _quickMenuItems = [
   {'icon': Icons.bar_chart, 'label': 'DSR'},
   {'icon': Icons.inventory, 'label': 'Inventory'},
   {'icon': Icons.settings, 'label': 'Settings'},
-  {'icon': Icons.help, 'label': 'Help Center'},
+  {'icon': Icons.summarize_outlined, 'label': 'Sales Summary'},
   {'icon': Icons.support_agent, 'label': 'Customer Support'},
   {'icon': Icons.analytics, 'label': 'Analytics'},
   {'icon': Icons.campaign, 'label': 'Promotions'},
