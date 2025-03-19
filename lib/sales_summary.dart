@@ -136,7 +136,7 @@ class _SalesSummaryPageState extends State<SalesSummaryPage> {
 
   Widget _buildZoneSummary(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
@@ -169,7 +169,7 @@ class _SalesSummaryPageState extends State<SalesSummaryPage> {
           ),
           SizedBox(height: 8),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 0.5, vertical: 1),
+            padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -195,8 +195,8 @@ class _SalesSummaryPageState extends State<SalesSummaryPage> {
 
   Widget _buildCategorySelection() {
     return Wrap(
-      spacing: 8,
-      runSpacing: 10,
+      spacing: 10,
+      runSpacing: 8,
       children: categories.map((category) {
         return GestureDetector(
           onTap: () {
@@ -207,7 +207,7 @@ class _SalesSummaryPageState extends State<SalesSummaryPage> {
           child: Text(
             category,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: selectedCategory == category
                   ? FontWeight.bold
                   : FontWeight.normal,

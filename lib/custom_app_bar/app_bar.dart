@@ -26,125 +26,128 @@ class _CustomAppBarState extends State<CustomAppBar> {
     final screenWidth = MediaQuery.of(context).size.width;
     double appBarHeight = isSearchActive ? 100 : 50;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      height: appBarHeight,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        // gradient: LinearGradient(
-        //   colors: [
-        //     Colors.blue[800]!,
-        //     Colors.blueAccent,
-        //   ],
-        //   begin: Alignment.topLeft,
-        //   end: Alignment.bottomRight,
-        // ),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              toolbarHeight: 50,
-              automaticallyImplyLeading: false,
-              title: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Scaffold.of(context).openDrawer(),
-                    child: const Icon(Icons.menu, color: Colors.black),
+    return SafeArea(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        height: appBarHeight,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          // gradient: LinearGradient(
+          //   colors: [
+          //     Colors.blue[800]!,
+          //     Colors.blueAccent,
+          //   ],
+          //   begin: Alignment.topLeft,
+          //   end: Alignment.bottomRight,
+          // ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                toolbarHeight: 50,
+                automaticallyImplyLeading: false,
+                title: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      child: const Icon(Icons.menu, color: Colors.black),
+                    ),
+                    Container(
+                      height: 25,
+                      width: 1.5,
+                      color: Colors.grey,
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ContentPage()),
+                        );
+                      },
+                      child: const Text(
+                        "SPARSH",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    if (screenWidth > 1080)
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildDropdownMenu(
+                                context, 'Transactions', transactionLinks),
+                            _buildDropdownMenu(context, 'Reports', reportLinks),
+                            _buildDropdownMenu(context, 'Masters', masterLinks),
+                            _buildDropdownMenu(
+                                context, 'Miscellaneous', miscLinks),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.notifications_active_outlined,
+                        color: Colors.black),
+                    onPressed: () {},
                   ),
-                  Container(
-                    height: 25,
-                    width: 1.5,
-                    color: Colors.grey,
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ContentPage()),
-                      );
+                  IconButton(
+                    icon: const Icon(Icons.search, color: Colors.black),
+                    onPressed: () {
+                      setState(() {
+                        isSearchActive = !isSearchActive;
+                      });
                     },
-                    child: const Text(
-                      "SPARSH",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                   ),
-                  if (screenWidth > 1080)
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildDropdownMenu(
-                              context, 'Transactions', transactionLinks),
-                          _buildDropdownMenu(context, 'Reports', reportLinks),
-                          _buildDropdownMenu(context, 'Masters', masterLinks),
-                          _buildDropdownMenu(
-                              context, 'Miscellaneous', miscLinks),
-                        ],
-                      ),
-                    ),
+
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 2),
+                  //   child: IconButton(
+                  //     iconSize: 30,
+                  //     icon: const CircleAvatar(
+                  //       radius: 20,
+                  //       backgroundImage: AssetImage('assets/profile_image.png'),
+                  //     ),
+                  //     onPressed: () {
+                  //       final isMobile = Theme.of(context).platform ==
+                  //               TargetPlatform.iOS ||
+                  //           Theme.of(context).platform == TargetPlatform.android;
+
+                  //       if (isMobile) {
+                  //         Scaffold.of(context).openEndDrawer();
+                  //       } else {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => const ProfilePage()),
+                  //         );
+                  //       }
+                  //     },
+                  //   ),
+                  // ),
                 ],
               ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.notifications_active_outlined,
-                      color: Colors.black),
-                  onPressed: () {},
+              if (isSearchActive)
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                  child: SizedBox(
+                    height: 40,
+                    child: SearchBarWidget(),
+                  ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.search, color: Colors.black),
-                  onPressed: () {
-                    setState(() {
-                      isSearchActive = !isSearchActive;
-                    });
-                  },
-                ),
-
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 2),
-                //   child: IconButton(
-                //     iconSize: 30,
-                //     icon: const CircleAvatar(
-                //       radius: 20,
-                //       backgroundImage: AssetImage('assets/profile_image.png'),
-                //     ),
-                //     onPressed: () {
-                //       final isMobile = Theme.of(context).platform ==
-                //               TargetPlatform.iOS ||
-                //           Theme.of(context).platform == TargetPlatform.android;
-
-                //       if (isMobile) {
-                //         Scaffold.of(context).openEndDrawer();
-                //       } else {
-                //         Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //               builder: (context) => const ProfilePage()),
-                //         );
-                //       }
-                //     },
-                //   ),
-                // ),
-              ],
-            ),
-            if (isSearchActive)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                child: SizedBox(
-                  height: 40,
-                  child: SearchBarWidget(),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
