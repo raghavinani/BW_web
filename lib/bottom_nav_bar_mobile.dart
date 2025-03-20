@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login/QR_scanner.dart';
+import 'package:login/token_scan.dart';
 import 'package:login/content.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
@@ -123,7 +123,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const QrCodeScanner()),
+                        builder: (context) => const TokenScanApp()),
                   );
                 },
                 child: Container(

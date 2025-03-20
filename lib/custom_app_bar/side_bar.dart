@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'app_links.dart';
 import 'package:login/RetailerEntry.dart';
-import 'package:login/QR_scanner.dart';
+import 'package:login/token_scan.dart';
 import 'package:login/order_update.dart';
 import 'package:login/order_entry.dart';
 
@@ -179,7 +179,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
           } else if (value == 'Token Scan') {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const QrCodeScanner()),
+              MaterialPageRoute(builder: (context) => const TokenScanApp()),
             );
           } else if (value == 'Order Update') {
             Navigator.push(
