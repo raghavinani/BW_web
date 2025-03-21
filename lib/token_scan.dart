@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:login/token_summary.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:login/custom_app_bar/app_bar.dart';
-import 'package:login/custom_app_bar/side_bar.dart';
+// import 'package:login/custom_app_bar/app_bar.dart';
+// import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/content.dart';
+import 'package:login/token_details.dart';
+import 'package:login/token_report.dart';
 
 void main() {
   runApp(const TokenScanApp());
@@ -98,8 +101,7 @@ class _TokenScanPageState extends State<TokenScanPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            _cameraController.stop();
-            _cameraController.dispose();
+            dispose();
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             } else {
@@ -265,7 +267,13 @@ class _TokenScanPageState extends State<TokenScanPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const TokenDetailsPage()),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey.shade700),
                     child: const Text('Details',
@@ -273,7 +281,13 @@ class _TokenScanPageState extends State<TokenScanPage> {
                             color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const TokenReportScreen()),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey.shade700),
                     child: const Text('Report',
@@ -281,7 +295,13 @@ class _TokenScanPageState extends State<TokenScanPage> {
                             color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const TokenSummaryScreen()),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey.shade700),
                     child: const Text('Summary',
