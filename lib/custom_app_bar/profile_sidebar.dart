@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login/aadhar_kyc.dart';
 import 'package:login/content.dart';
+import 'package:login/emp_profile_update.dart';
 import 'package:login/view_orders.dart';
 // import 'app_links.dart';
 // import 'package:login/RetailerEntry.dart';
@@ -146,7 +147,20 @@ class _ProfileSidebarState extends State<ProfileSidebar> {
                                 );
                               },
                             ),
-
+                            _buildMenuItem(
+                              context,
+                              icon: Icons.person_2_outlined,
+                              label: 'Employee Profile Updation',
+                              onTap: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const EmployeeProfileUpdation(),
+                                  ),
+                                );
+                              },
+                            ),
                             // // Collapsible Menus
                             // _buildCollapsibleMenu('Transactions',
                             //     transactionLinks, Icons.receipt_long),

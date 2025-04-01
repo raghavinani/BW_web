@@ -365,15 +365,18 @@ class _DSRvisitpageState extends State<DSRvisit> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 2),
         SizedBox(
-          height: 40,
+          height: 40, // Increased height for better visibility
           child: TextFormField(
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(left: 8),
+              labelText: label, // Label inside the field
+              labelStyle:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              floatingLabelBehavior:
+                  FloatingLabelBehavior.auto, // Moves label above when typing
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -395,23 +398,26 @@ class _DSRvisitpageState extends State<DSRvisit> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 2),
         SizedBox(
-          height: 40,
+          height: 40, // Ensuring proper height
           child: TextFormField(
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(left: 8),
+              labelText: label, // Label inside the field
+              labelStyle:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              floatingLabelBehavior:
+                  FloatingLabelBehavior.auto, // Moves label above when typing
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
             validator: (value) {
-              if ((value == null || value.isEmpty)) {
+              if (label.endsWith('*') && (value == null || value.isEmpty)) {
                 return 'This field is required';
               }
               return null;
@@ -427,12 +433,15 @@ class _DSRvisitpageState extends State<DSRvisit> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 14)),
-        const SizedBox(height: 2),
         SizedBox(
           height: 40,
           child: TextFormField(
             readOnly: true,
+            controller: TextEditingController(
+              text: _selectedDate != null
+                  ? '${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!.year}'
+                  : '',
+            ),
             onTap: () async {
               DateTime? pickedDate = await showDatePicker(
                 context: context,
@@ -446,14 +455,17 @@ class _DSRvisitpageState extends State<DSRvisit> {
                 });
               }
             },
-            controller: TextEditingController(
-              text: _selectedDate != null
-                  ? '${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!.year}'
-                  : '',
-            ),
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(left: 8),
+              labelText: label, // Floating label
+              labelStyle:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              floatingLabelBehavior:
+                  FloatingLabelBehavior.auto, // Moves label above when filled
+              suffixIcon:
+                  const Icon(Icons.calendar_today, size: 18), // Calendar icon
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -475,26 +487,26 @@ class _DSRvisitpageState extends State<DSRvisit> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 14)),
-        const SizedBox(height: 2),
         SizedBox(
           height: 40,
           child: DropdownButtonFormField<String>(
-            style: const TextStyle(fontSize: 12, color: Colors.black),
+            style: const TextStyle(fontSize: 14, color: Colors.black),
             dropdownColor: Colors.white,
             items: items
                 .map((item) => DropdownMenuItem<String>(
                       value: item,
-                      child: Text(item,
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.black)),
+                      child: Text(item, style: const TextStyle(fontSize: 14)),
                     ))
                 .toList(),
             onChanged: (value) {},
             decoration: InputDecoration(
+              labelText: label, // Floating label
+              labelStyle:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              floatingLabelBehavior:
+                  FloatingLabelBehavior.auto, // Moves label above when selected
               contentPadding:
-                  EdgeInsets.only(left: 8), // Removes default padding
-              // isDense: true, // Reduces height
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),

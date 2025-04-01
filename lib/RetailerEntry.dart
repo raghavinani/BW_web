@@ -311,15 +311,18 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 2),
         SizedBox(
-          height: 40,
+          height: 40, // Increased height for better visibility
           child: TextFormField(
             style: const TextStyle(fontSize: 14),
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(left: 8),
+              labelText: label, // Label inside the field
+              labelStyle:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              floatingLabelBehavior:
+                  FloatingLabelBehavior.auto, // Moves label above when typing
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -341,26 +344,26 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 14)),
-        const SizedBox(height: 2),
         SizedBox(
           height: 40,
           child: DropdownButtonFormField<String>(
-            style: const TextStyle(fontSize: 12, color: Colors.black),
+            style: const TextStyle(fontSize: 14, color: Colors.black),
             dropdownColor: Colors.white,
             items: items
                 .map((item) => DropdownMenuItem<String>(
                       value: item,
-                      child: Text(item,
-                          style: const TextStyle(
-                              fontSize: 12, color: Colors.black)),
+                      child: Text(item, style: const TextStyle(fontSize: 14)),
                     ))
                 .toList(),
             onChanged: (value) {},
             decoration: InputDecoration(
+              labelText: label, // Floating label
+              labelStyle:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              floatingLabelBehavior:
+                  FloatingLabelBehavior.auto, // Moves label above when selected
               contentPadding:
-                  EdgeInsets.only(left: 8), // Removes default padding
-              // isDense: true, // Reduces height
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -478,18 +481,28 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 14)),
-        const SizedBox(height: 2),
         SizedBox(
           height: 40,
           child: TextFormField(
             initialValue: value,
-            enabled: false,
-            style: const TextStyle(fontSize: 14),
+            enabled: false, // Keeps the field disabled
+            style: const TextStyle(
+                fontSize: 14, color: Colors.black54), // Slightly gray text
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(left: 8),
+              labelText: label, // Floating label
+              labelStyle:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              floatingLabelBehavior: FloatingLabelBehavior
+                  .auto, // Moves label above when field is filled
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
+              ),
+              disabledBorder: OutlineInputBorder(
+                // Custom border for disabled state
+                borderRadius: BorderRadius.circular(8.0),
+                borderSide: const BorderSide(color: Colors.grey),
               ),
             ),
           ),

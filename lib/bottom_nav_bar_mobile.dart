@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login/token_scan.dart';
 import 'package:login/content.dart';
+import 'package:login/profile_page.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({super.key});
@@ -30,7 +31,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         MaterialPageRoute(builder: (context) => const ContentPage()),
       );
     } else if (index == 1) {
-      Scaffold.of(context).openEndDrawer();
+      // Scaffold.of(context).openEndDrawer();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfilePage()),
+      );
     }
   }
 
