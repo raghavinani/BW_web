@@ -9,7 +9,7 @@ final transactionLinks = [
       '194Q Detail Entry',
       'Token Scan Details',
       'Token Scan Report',
-      'Token Scan New',
+      'Token Scan Summary',
     ],
   },
   {

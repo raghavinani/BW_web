@@ -55,6 +55,7 @@ class _SalesSummaryPageState extends State<SalesSummaryPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildReportSelection(context),
+            SizedBox(height: 8),
             _buildZoneSummary(context),
             SizedBox(height: 16),
           ],
@@ -136,7 +137,7 @@ class _SalesSummaryPageState extends State<SalesSummaryPage> {
 
   Widget _buildZoneSummary(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),

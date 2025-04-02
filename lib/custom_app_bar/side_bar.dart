@@ -24,70 +24,72 @@ class _CustomSidebarState extends State<CustomSidebar> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Stack(
-      children: [
-        Positioned(
-          child: SizedBox(
-            width: screenWidth * 0.7,
-            child: Drawer(
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 90,
-                        decoration: const BoxDecoration(
-                          color: Colors.blue,
+    return SafeArea(
+      child: Stack(
+        children: [
+          Positioned(
+            child: SizedBox(
+              width: screenWidth * 0.7,
+              child: Drawer(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 90,
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                          ),
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            'assets/logo.png',
+                            height: 70,
+                            width: 140,
+                            fit: BoxFit.fill,
+                          ),
                         ),
-                        alignment: Alignment.center,
-                        child: Image.asset(
-                          'assets/logo.png',
-                          height: 70,
-                          width: 140,
-                          fit: BoxFit.fill,
+                        _buildCollapsibleMenu('Transactions', transactionLinks,
+                            Icons.receipt_long),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child:
+                              const Divider(color: Colors.blue, thickness: 0.8),
                         ),
-                      ),
-                      _buildCollapsibleMenu(
-                          'Transactions', transactionLinks, Icons.receipt_long),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child:
-                            const Divider(color: Colors.blue, thickness: 0.8),
-                      ),
-                      _buildCollapsibleMenu(
-                          'Reports', reportLinks, Icons.insert_chart),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child:
-                            const Divider(color: Colors.blue, thickness: 0.8),
-                      ),
-                      _buildCollapsibleMenu(
-                          'Masters', masterLinks, Icons.settings_applications),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child:
-                            const Divider(color: Colors.blue, thickness: 0.8),
-                      ),
-                      _buildCollapsibleMenu(
-                          'Miscellaneous', miscLinks, Icons.more_horiz),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child:
-                            const Divider(color: Colors.blue, thickness: 0.8),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
+                        _buildCollapsibleMenu(
+                            'Reports', reportLinks, Icons.insert_chart),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child:
+                              const Divider(color: Colors.blue, thickness: 0.8),
+                        ),
+                        _buildCollapsibleMenu('Masters', masterLinks,
+                            Icons.settings_applications),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child:
+                              const Divider(color: Colors.blue, thickness: 0.8),
+                        ),
+                        _buildCollapsibleMenu(
+                            'Miscellaneous', miscLinks, Icons.more_horiz),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child:
+                              const Divider(color: Colors.blue, thickness: 0.8),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

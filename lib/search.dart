@@ -6,6 +6,10 @@ import 'package:login/order_entry.dart';
 import 'package:login/order_update.dart';
 import 'package:login/sales_summary.dart';
 import 'package:login/view_orders.dart';
+import 'package:login/DSR.dart';
+import 'package:login/token_summary.dart';
+import 'package:login/token_details.dart';
+import 'package:login/token_report.dart';
 
 class SearchBarWidget extends StatefulWidget {
   SearchBarWidget({super.key});
@@ -36,7 +40,8 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       'Promotions',
       'Account Management',
       'Delivery Status',
-      'Feedback'
+      'Feedback',
+      'DSR'
     ],
   }.toList(); // Convert back to List to preserve ordering
 
@@ -58,6 +63,21 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
         context,
         MaterialPageRoute(builder: (context) => const TokenScanApp()),
       );
+    } else if (value == 'Token Scan Report') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TokenReportScreen()),
+      );
+    } else if (value == 'Token Scan Details') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TokenDetailsPage()),
+      );
+    } else if (value == 'Token Scan Summary') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TokenSummaryScreen()),
+      );
     } else if (value == 'Order Update') {
       Navigator.push(
         context,
@@ -72,6 +92,11 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => SalesSummaryPage()),
+      );
+    } else if (value == 'DSR') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const DSR()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

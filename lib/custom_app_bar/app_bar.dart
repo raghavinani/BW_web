@@ -7,6 +7,9 @@ import 'package:login/content.dart';
 import 'package:login/order_update.dart';
 import 'package:login/search.dart';
 import 'app_links.dart';
+import 'package:login/token_summary.dart';
+import 'package:login/token_details.dart';
+import 'package:login/token_report.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -223,6 +226,21 @@ class _CustomAppBarState extends State<CustomAppBar> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const TokenScanApp()),
+      );
+    } else if (value == 'Token Scan Report') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TokenReportScreen()),
+      );
+    } else if (value == 'Token Scan Details') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TokenDetailsPage()),
+      );
+    } else if (value == 'Token Scan Summary') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const TokenSummaryScreen()),
       );
     } else if (value == 'Order Update') {
       Navigator.push(
