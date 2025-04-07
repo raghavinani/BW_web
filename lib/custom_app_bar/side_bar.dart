@@ -19,6 +19,8 @@ class _CustomSidebarState extends State<CustomSidebar> {
     'Masters': false,
     'Miscellaneous': false,
   };
+  String? selectedMainSection;
+  String? selectedSubMenu;
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +106,8 @@ class _CustomSidebarState extends State<CustomSidebar> {
             onTap: () {
               setState(() {
                 expandedSections[title] = !expandedSections[title]!;
+                selectedMainSection = title;
+                selectedSubMenu = null;
               });
             },
             child: Padding(
@@ -116,8 +120,10 @@ class _CustomSidebarState extends State<CustomSidebar> {
                   Expanded(
                     child: Text(
                       title,
-                      style: const TextStyle(
-                        color: Colors.black,
+                      style: TextStyle(
+                        color: selectedMainSection == title
+                            ? Colors.blue
+                            : Colors.black,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
@@ -151,6 +157,12 @@ class _CustomSidebarState extends State<CustomSidebar> {
           vertical: 4.0), // Space between submenu items
       child: PopupMenuButton<String>(
         offset: const Offset(280, 0), // Adjust dropdown position
+        onOpened: () {
+          // Set highlight when the popup is opened
+          setState(() {
+            selectedSubMenu = link['title'];
+          });
+        },
         child: Padding(
           padding: const EdgeInsets.only(
               left: 20.0), // Shift submenu items slightly right
@@ -159,7 +171,10 @@ class _CustomSidebarState extends State<CustomSidebar> {
             children: [
               Text(
                 link['title'],
-                style: const TextStyle(
+                style: TextStyle(
+                  color: selectedSubMenu == link['title']
+                      ? Colors.blue
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                 ),

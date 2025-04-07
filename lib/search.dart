@@ -20,6 +20,7 @@ class SearchBarWidget extends StatefulWidget {
 
 class _SearchBarWidgetState extends State<SearchBarWidget> {
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   List<String> _filteredItems = [];
   OverlayEntry? _overlayEntry;
 
@@ -43,7 +44,19 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       'Feedback',
       'DSR'
     ],
-  }.toList(); // Convert back to List to preserve ordering
+  }.toList();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Listener to hide overlay when focus is lost
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        _removeOverlay();
+      }
+    });
+  }
 
   void _handleNavigation(String value) {
     _removeOverlay(); // Close dropdown
@@ -172,6 +185,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   @override
   void dispose() {
     _searchController.dispose();
+    _focusNode.dispose(); // Dispose here
     _removeOverlay();
     super.dispose();
   }
@@ -183,6 +197,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: TextField(
         controller: _searchController,
+        focusNode: _focusNode,
         textAlign: TextAlign.start,
         style: const TextStyle(fontSize: 12, color: Colors.black),
         decoration: InputDecoration(
@@ -206,7 +221,15 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
               IconButton(
                 icon: const Icon(Icons.qr_code_scanner,
                     size: 20, color: Colors.black),
-                onPressed: () {},
+                onPressed: () {
+                  _focusNode.unfocus(); // Optional: close keyboard
+                  _removeOverlay();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const TokenScanApp()),
+                  );
+                },
               ),
             ],
           ),
