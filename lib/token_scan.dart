@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:login/token_summary.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 // import 'package:login/custom_app_bar/app_bar.dart';
 // import 'package:login/custom_app_bar/side_bar.dart';
 import 'package:login/content.dart';
+import 'package:login/token_summary.dart';
 import 'package:login/token_details.dart';
 import 'package:login/token_report.dart';
 
@@ -38,6 +38,7 @@ class _TokenScanPageState extends State<TokenScanPage> {
   int _remainingAttempts = 3;
   final TextEditingController _pinController = TextEditingController();
   bool _isCameraPaused = false;
+  double _currentZoom = 1.0;
 
   void _validateToken(String value) {
     setState(() {
@@ -117,37 +118,24 @@ class _TokenScanPageState extends State<TokenScanPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // const Text(
-            //   'Token Scan',
-            //   style: TextStyle(
-            //     fontSize: 18,
-            //     fontWeight: FontWeight.bold,
-            //     color: Colors.blueAccent,
-            //   ),
-            // ),
-            // const SizedBox(height: 4),
-            Container(
-              width: double.infinity,
+            SizedBox(
               height: MediaQuery.of(context).size.height * 0.4,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              padding: const EdgeInsets.all(16),
               child: _isCameraPaused
                   ? Stack(
                       alignment: Alignment.center,
                       children: [
                         Container(
-                          color: Colors.black.withOpacity(0.7),
-                          child: Center(
-                            child: Text(
-                              "Scanned",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          alignment: Alignment.center,
+                          child: const Text(
+                            "Scanned",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -162,36 +150,95 @@ class _TokenScanPageState extends State<TokenScanPage> {
                     )
                   : Row(
                       children: [
+                        // Scanner View Container
                         Expanded(
                           flex: 4,
-                          child: MobileScanner(
-                            controller: _cameraController,
-                            onDetect: (capture) {
-                              final barcode = capture.barcodes.first;
-                              if (barcode.rawValue != null) {
-                                _validateToken(barcode.rawValue!);
-                              }
-                            },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: MobileScanner(
+                                controller: _cameraController,
+                                onDetect: (capture) {
+                                  final barcode = capture.barcodes.first;
+                                  if (barcode.rawValue != null) {
+                                    _validateToken(barcode.rawValue!);
+                                  }
+                                },
+                              ),
+                            ),
                           ),
                         ),
-                        const VerticalDivider(
-                            color: Colors.black, thickness: 1),
+
+                        // Control Panel Container
                         Expanded(
                           flex: 1,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.flash_on),
-                                onPressed: () =>
-                                    _cameraController.toggleTorch(),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.zoom_in),
-                                onPressed: () =>
-                                    _cameraController.setZoomScale(2.0),
-                              ),
-                            ],
+                          child: Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.grey.shade400),
+                            ),
+                            child: Column(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Flash Icon Button
+                                SizedBox(
+                                  width: 36,
+                                  height: 36,
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey,
+                                    ),
+                                    child: IconButton(
+                                      icon: const Icon(Icons.flash_on,
+                                          color: Colors.black, size: 20),
+                                      onPressed: () =>
+                                          _cameraController.toggleTorch(),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 24),
+                                // Zoom Slider
+                                const Icon(Icons.add, size: 16),
+                                RotatedBox(
+                                  quarterTurns: -1,
+                                  child: SizedBox(
+                                    width: 150,
+                                    child: SliderTheme(
+                                      data: SliderTheme.of(context).copyWith(
+                                        trackHeight: 3,
+                                        activeTrackColor: Colors.blue,
+                                        inactiveTrackColor: Colors.black,
+                                        thumbShape: const RoundSliderThumbShape(
+                                            enabledThumbRadius: 10),
+                                        overlayShape:
+                                            SliderComponentShape.noOverlay,
+                                      ),
+                                      child: Slider(
+                                        value: _currentZoom,
+                                        min: 1.0,
+                                        max: 4.0,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _currentZoom = value;
+                                          });
+                                          _cameraController.setZoomScale(value);
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const Icon(Icons.remove, size: 16),
+                              ],
+                            ),
                           ),
                         ),
                       ],
