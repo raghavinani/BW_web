@@ -225,7 +225,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     } else if (value == 'Token Scan') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const TokenScanApp()),
+        MaterialPageRoute(builder: (context) => const TokenScanPage()),
       );
     } else if (value == 'Token Scan Report') {
       Navigator.push(

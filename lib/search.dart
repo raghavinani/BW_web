@@ -74,7 +74,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
     } else if (value == 'Token Scan') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const TokenScanApp()),
+        MaterialPageRoute(builder: (context) => const TokenScanPage()),
       );
     } else if (value == 'Token Scan Report') {
       Navigator.push(
@@ -227,7 +227,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const TokenScanApp()),
+                        builder: (context) => const TokenScanPage()),
                   );
                 },
               ),

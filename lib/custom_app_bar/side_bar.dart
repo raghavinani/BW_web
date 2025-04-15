@@ -196,7 +196,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
           } else if (value == 'Token Scan') {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const TokenScanApp()),
+              MaterialPageRoute(builder: (context) => const TokenScanPage()),
             );
           } else if (value == 'Order Update') {
             Navigator.push(
