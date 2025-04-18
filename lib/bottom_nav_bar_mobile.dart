@@ -128,7 +128,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const TokenScanPage()),
+                        builder: (context) => const TokenScanApp()),
                   );
                 },
                 child: Container(
